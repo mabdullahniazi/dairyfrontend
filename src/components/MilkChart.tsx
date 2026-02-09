@@ -1,6 +1,14 @@
-import { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts';
-import { db } from '../db/database';
+import { useState, useEffect } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+} from "recharts";
+import { db } from "../db/database";
 
 interface ChartData {
   date: string;
@@ -23,12 +31,17 @@ export default function MilkChart() {
       ago.setDate(ago.getDate() - 30);
 
       const reports = await db.dailyReports
-        .where('date')
-        .between(ago.toISOString().split('T')[0], today.toISOString().split('T')[0], true, true)
+        .where("date")
+        .between(
+          ago.toISOString().split("T")[0],
+          today.toISOString().split("T")[0],
+          true,
+          true,
+        )
         .toArray();
 
       const totals: Record<string, number> = {};
-      reports.forEach(r => {
+      reports.forEach((r) => {
         if (!totals[r.date]) totals[r.date] = 0;
         totals[r.date] += r.milk || 0;
       });
@@ -37,17 +50,20 @@ export default function MilkChart() {
       for (let i = 13; i >= 0; i--) {
         const d = new Date(today);
         d.setDate(d.getDate() - i);
-        const dateStr = d.toISOString().split('T')[0];
+        const dateStr = d.toISOString().split("T")[0];
         chartData.push({
           date: dateStr,
-          day: i === 0 ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' }),
+          day:
+            i === 0
+              ? "Today"
+              : d.toLocaleDateString("en-US", { weekday: "short" }),
           milk: totals[dateStr] || 0,
         });
       }
 
       setData(chartData);
     } catch (err) {
-      console.error('Chart load failed:', err);
+      console.error("Chart load failed:", err);
     } finally {
       setLoading(false);
     }
@@ -55,12 +71,12 @@ export default function MilkChart() {
 
   if (loading) return <div className="skeleton" style={{ height: 160 }} />;
 
-  const hasData = data.some(d => d.milk > 0);
+  const hasData = data.some((d) => d.milk > 0);
   if (!hasData) {
     return (
-      <div className="text-center text-muted" style={{ padding: '32px 0' }}>
+      <div className="text-center text-muted" style={{ padding: "32px 0" }}>
         <p style={{ fontWeight: 500 }}>No data yet</p>
-        <p style={{ fontSize: '0.8rem' }}>Add reports to see the chart.</p>
+        <p style={{ fontSize: "0.8rem" }}>Add reports to see the chart.</p>
       </div>
     );
   }
@@ -68,15 +84,33 @@ export default function MilkChart() {
   return (
     <ResponsiveContainer width="100%" height={160}>
       <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-        <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#8C8279' }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fontSize: 10, fill: '#8C8279' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}L`} />
-        <Tooltip
-          formatter={(value) => [`${value ?? 0}L`, 'Milk']}
-          contentStyle={{ background: '#fff', border: '1px solid #E2D9CF', borderRadius: 8, fontSize: 12 }}
+        <XAxis
+          dataKey="day"
+          tick={{ fontSize: 10, fill: "#9199AD" }}
+          axisLine={false}
+          tickLine={false}
         />
-        <Bar dataKey="milk" radius={[4, 4, 0, 0]}>
+        <YAxis
+          tick={{ fontSize: 10, fill: "#9199AD" }}
+          axisLine={false}
+          tickLine={false}
+          tickFormatter={(v) => `${v}L`}
+        />
+        <Tooltip
+          formatter={(value) => [`${value ?? 0}L`, "Milk"]}
+          contentStyle={{
+            background: "#fff",
+            border: "1px solid #E3E5EB",
+            borderRadius: 8,
+            fontSize: 12,
+          }}
+        />
+        <Bar dataKey="milk" radius={[3, 3, 0, 0]}>
           {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.milk > 0 ? '#7C9A6D' : '#E2D9CF'} />
+            <Cell
+              key={`cell-${index}`}
+              fill={entry.milk > 0 ? "#4361EE" : "#E3E5EB"}
+            />
           ))}
         </Bar>
       </BarChart>
