@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { db, getAnimalEmoji, type Animal } from '../db/database';
+import { db, type Animal } from '../db/database';
 
 type AnimalType = 'cow' | 'buffalo' | 'goat' | 'sheep';
 
@@ -126,7 +126,7 @@ export default function AnimalFormPage() {
   return (
     <div>
       <div className="page-title">
-        <h1>{isEditing ? '✏️ Edit Animal' : '➕ Add Animal'}</h1>
+        <h1>{isEditing ? 'Edit Animal' : 'Add Animal'}</h1>
         <p className="page-subtitle">
           {isEditing ? 'Update animal information' : 'Add a new animal to your farm'}
         </p>
@@ -171,7 +171,7 @@ export default function AnimalFormPage() {
                 className={`type-option ${form.type === type ? 'selected' : ''}`}
                 onClick={() => setForm({ ...form, type })}
               >
-                <span className="type-option-icon">{getAnimalEmoji(type)}</span>
+                <span className="type-option-icon">{type.slice(0, 2).toUpperCase()}</span>
                 <span className="type-option-label">{type}</span>
               </button>
             ))}
@@ -224,7 +224,7 @@ export default function AnimalFormPage() {
                 onClick={() => removeCustomAttribute(index)}
                 style={{ padding: '8px 12px' }}
               >
-                ✕
+                X
               </button>
             </div>
           ))}

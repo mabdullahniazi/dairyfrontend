@@ -11,9 +11,9 @@ export default function Layout() {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/', icon: '📊', label: 'Dashboard' },
-    { path: '/animals', icon: '🐄', label: 'Animals' },
-    { path: '/report', icon: '📝', label: 'Add Report' },
+    { path: '/', label: 'Dashboard' },
+    { path: '/animals', label: 'Animals' },
+    { path: '/report', label: 'Add Report' },
   ];
 
   return (
@@ -25,32 +25,30 @@ export default function Layout() {
             <img src="/icons/icon-192.png" alt="Logo" />
             <div>
               <div className="sidebar-logo-text">Livestock</div>
-              <div className="sidebar-logo-sub">Management System</div>
+              <div className="sidebar-logo-sub">Management</div>
             </div>
           </div>
         </div>
 
         <nav className="sidebar-nav">
-          <div className="nav-section-title">Main Menu</div>
-          {navItems.map(({ path, icon, label }) => (
+          <div className="nav-section-title">Menu</div>
+          {navItems.map(({ path, label }) => (
             <Link
               key={path}
               to={path}
               className={`nav-item ${isActive(path) ? 'active' : ''}`}
             >
-              <span className="nav-icon">{icon}</span>
               {label}
             </Link>
           ))}
 
-          <div className="nav-section-title">Quick Actions</div>
+          <div className="nav-section-title">Actions</div>
           <Link to="/animals/add" className="nav-item">
-            <span className="nav-icon">➕</span>
-            Add Animal
+            New Animal
           </Link>
         </nav>
 
-        <div style={{ padding: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ padding: '16px', borderTop: '1px solid rgba(0,0,0,0.06)', marginTop: 'auto' }}>
           <OnlineIndicator />
         </div>
       </aside>
@@ -78,13 +76,12 @@ export default function Layout() {
         {/* Mobile Bottom Navigation */}
         {!isSubPage && (
           <nav className="bottom-nav">
-            {navItems.map(({ path, icon, label }) => (
+            {navItems.map(({ path, label }) => (
               <Link
                 key={path}
                 to={path}
                 className={`nav-item ${isActive(path) ? 'active' : ''}`}
               >
-                <span className="nav-icon">{icon}</span>
                 {label}
               </Link>
             ))}
