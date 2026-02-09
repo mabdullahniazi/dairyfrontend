@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { db, getTodayDate } from "../db/database";
 import MilkChart from "../components/MilkChart";
 import { SkeletonCard } from "../components/Loader";
+import { syncAll, isOnline } from "../services/syncService";
 
 interface Stats {
   total: number;
@@ -14,6 +15,9 @@ interface Stats {
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<string | null>(null);
+  const [notifScheduled, setNotifScheduled] = useState(false);
 
   useEffect(() => {
     load();
@@ -47,6 +51,75 @@ export default function DashboardPage() {
     }
   };
 
+  // Manual sync button handler
+  const handleSync = async () => {
+    if (!isOnline()) {
+      setSyncResult("⚠️ Offline - cannot sync");
+      setTimeout(() => setSyncResult(null), 3000);
+      return;
+    }
+
+    setSyncing(true);
+    setSyncResult(null);
+
+    try {
+      const result = await syncAll();
+      const pulled = result.pulled.animals + result.pulled.reports;
+      const pushed = result.pushed.animals + result.pushed.reports;
+
+      if (pulled === 0 && pushed === 0) {
+        setSyncResult("✓ Already in sync");
+      } else {
+        setSyncResult(`✓ Synced: ↓${pulled} ↑${pushed}`);
+      }
+
+      // Reload data after sync
+      await load();
+    } catch (err) {
+      console.error("Sync failed:", err);
+      setSyncResult("✗ Sync failed");
+    } finally {
+      setSyncing(false);
+      setTimeout(() => setSyncResult(null), 4000);
+    }
+  };
+
+  // Notification debug button - sends notification after 20 seconds
+  const handleNotificationDebug = async () => {
+    // Check permission
+    if (!("Notification" in window)) {
+      alert("Notifications not supported in this browser");
+      return;
+    }
+
+    if (Notification.permission === "denied") {
+      alert("Notifications are blocked. Please enable in browser settings.");
+      return;
+    }
+
+    if (Notification.permission !== "granted") {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        alert("Notification permission denied");
+        return;
+      }
+    }
+
+    // Schedule notification in 20 seconds
+    setNotifScheduled(true);
+    console.log("[Debug] Notification scheduled for 20 seconds from now");
+
+    setTimeout(() => {
+      new Notification("🔔 Livestock Manager", {
+        body: "Debug notification - this fired after 20 seconds!",
+        icon: "/icons/icon-192.png",
+        tag: "debug-notification",
+      });
+      setNotifScheduled(false);
+      console.log("[Debug] Notification sent!");
+    }, 20000);
+  };
+
   if (loading) {
     return (
       <div className="stats">
@@ -60,6 +133,15 @@ export default function DashboardPage() {
 
   return (
     <div>
+      {/* Sync Status Banner */}
+      {syncResult && (
+        <div
+          className={`alert ${syncResult.includes("✓") ? "alert-success" : "alert-error"}`}
+        >
+          {syncResult}
+        </div>
+      )}
+
       {/* Stats */}
       <div className="stats">
         <div className="stat">
@@ -105,7 +187,7 @@ export default function DashboardPage() {
             <div className="card-head">
               <span className="card-title">Quick Actions</span>
             </div>
-            <div className="card-body flex gap-3">
+            <div className="card-body flex gap-3" style={{ flexWrap: "wrap" }}>
               <Link to="/report" className="btn btn-sage">
                 New Report
               </Link>
@@ -115,6 +197,29 @@ export default function DashboardPage() {
               <Link to="/animals" className="btn btn-outline">
                 View All
               </Link>
+            </div>
+          </div>
+
+          {/* Sync & Debug Card */}
+          <div className="card">
+            <div className="card-head">
+              <span className="card-title">Sync & Debug</span>
+            </div>
+            <div className="card-body flex gap-3" style={{ flexWrap: "wrap" }}>
+              <button
+                className="btn btn-terra"
+                onClick={handleSync}
+                disabled={syncing}
+              >
+                {syncing ? "Syncing..." : "Sync Now"}
+              </button>
+              <button
+                className="btn btn-outline"
+                onClick={handleNotificationDebug}
+                disabled={notifScheduled}
+              >
+                {notifScheduled ? "Notif in 20s..." : "Test Notification"}
+              </button>
             </div>
           </div>
         </div>
