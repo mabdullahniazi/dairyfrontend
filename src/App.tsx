@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
+// Import sync service to enable auto-sync on page load
+import './services/syncService';
 import DashboardPage from './pages/DashboardPage';
 import AnimalsPage from './pages/AnimalsPage';
 import AnimalDetailsPage from './pages/AnimalDetailsPage';

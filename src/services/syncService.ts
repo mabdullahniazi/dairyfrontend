@@ -11,12 +11,18 @@ export const syncAnimals = async (): Promise<{ synced: number; errors: string[] 
     return { synced: 0, errors: ['Offline - cannot sync'] };
   }
 
-  const unsynced = await db.animals.where('synced').equals(0).toArray();
+  // Get animals where synced is false (boolean comparison)
+  const allAnimals = await db.animals.toArray();
+  const unsynced = allAnimals.filter(a => a.synced === false);
+  
+  console.log(`[Sync] Found ${unsynced.length} unsynced animals`);
+  
   const errors: string[] = [];
   let synced = 0;
 
   for (const animal of unsynced) {
     try {
+      console.log(`[Sync] Syncing animal: ${animal.name}`);
       const response = await fetch(`${API_URL}/animals`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,16 +41,20 @@ export const syncAnimals = async (): Promise<{ synced: number; errors: string[] 
           serverId: data._id,
           synced: true,
         });
+        console.log(`[Sync] ✅ Animal ${animal.name} synced successfully, serverId: ${data._id}`);
         synced++;
       } else {
         const errorData = await response.json();
+        console.error(`[Sync] ❌ Failed to sync ${animal.name}:`, errorData);
         errors.push(`Failed to sync ${animal.name}: ${errorData.error}`);
       }
     } catch (err) {
+      console.error(`[Sync] ❌ Network error syncing ${animal.name}:`, err);
       errors.push(`Network error syncing ${animal.name}`);
     }
   }
 
+  console.log(`[Sync] Completed: ${synced} synced, ${errors.length} errors`);
   return { synced, errors };
 };
 
@@ -54,7 +64,11 @@ export const syncReports = async (): Promise<{ synced: number; errors: string[] 
     return { synced: 0, errors: ['Offline - cannot sync'] };
   }
 
-  const unsynced = await db.dailyReports.where('synced').equals(0).toArray();
+  const allReports = await db.dailyReports.toArray();
+  const unsynced = allReports.filter(r => r.synced === false);
+  
+  console.log(`[Sync] Found ${unsynced.length} unsynced reports`);
+  
   const errors: string[] = [];
   let synced = 0;
 
@@ -63,10 +77,11 @@ export const syncReports = async (): Promise<{ synced: number; errors: string[] 
       // Get the animal's server ID
       const animal = await db.animals.get(report.animalId);
       if (!animal?.serverId) {
-        // Animal not synced yet, skip this report
+        console.log(`[Sync] Skipping report - animal ${report.animalId} not synced yet`);
         continue;
       }
 
+      console.log(`[Sync] Syncing report for animal ${animal.name}`);
       const response = await fetch(`${API_URL}/reports`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -80,19 +95,21 @@ export const syncReports = async (): Promise<{ synced: number; errors: string[] 
       });
 
       if (response.ok || response.status === 409) {
-        // 409 = duplicate, which means it's already synced
         const data = response.ok ? await response.json() : null;
         await db.dailyReports.update(report.id!, {
           serverId: data?._id,
           animalServerId: animal.serverId,
           synced: true,
         });
+        console.log(`[Sync] ✅ Report synced successfully`);
         synced++;
       } else {
         const errorData = await response.json();
+        console.error(`[Sync] ❌ Failed to sync report:`, errorData);
         errors.push(`Failed to sync report: ${errorData.error}`);
       }
     } catch (err) {
+      console.error(`[Sync] ❌ Network error syncing report:`, err);
       errors.push(`Network error syncing report`);
     }
   }
@@ -102,14 +119,18 @@ export const syncReports = async (): Promise<{ synced: number; errors: string[] 
 
 // Full sync
 export const syncAll = async (): Promise<{ animals: number; reports: number; errors: string[] }> => {
+  console.log('[Sync] Starting full sync...');
   const animalsResult = await syncAnimals();
   const reportsResult = await syncReports();
 
-  return {
+  const result = {
     animals: animalsResult.synced,
     reports: reportsResult.synced,
     errors: [...animalsResult.errors, ...reportsResult.errors],
   };
+  
+  console.log('[Sync] Full sync complete:', result);
+  return result;
 };
 
 // Animal CRUD helpers
@@ -121,8 +142,11 @@ export const createAnimal = async (data: Omit<Animal, 'id' | 'synced' | 'created
     updatedAt: new Date(),
   });
   
+  console.log(`[DB] Created animal with local id: ${id}`);
+  
   // Try to sync immediately if online
   if (isOnline()) {
+    console.log('[Sync] Online - triggering immediate sync');
     syncAnimals().catch(console.error);
   }
   
@@ -154,7 +178,10 @@ export const createReport = async (data: Omit<DailyReport, 'id' | 'synced' | 'cr
     createdAt: new Date(),
   });
   
+  console.log(`[DB] Created report with local id: ${id}`);
+  
   if (isOnline()) {
+    console.log('[Sync] Online - triggering immediate sync');
     syncReports().catch(console.error);
   }
   
@@ -170,3 +197,18 @@ export const getTodayStats = async (): Promise<{ totalMilk: number; reportCount:
     reportCount: reports.length,
   };
 };
+
+// Trigger sync on load if online
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
+    if (isOnline()) {
+      console.log('[Sync] Page loaded while online - triggering sync');
+      setTimeout(() => syncAll(), 1000);
+    }
+  });
+  
+  window.addEventListener('online', () => {
+    console.log('[Sync] Came back online - triggering sync');
+    syncAll();
+  });
+}

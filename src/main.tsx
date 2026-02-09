@@ -6,14 +6,8 @@ import { initNotifications } from './services/notificationService'
 // Initialize notifications when app loads
 initNotifications().catch(console.error);
 
-// Register service worker for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
-      console.log('ServiceWorker registration failed:', err);
-    });
-  });
-}
+// Service worker is automatically registered by vite-plugin-pwa in production build
+// No manual registration needed - the plugin injects it
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
