@@ -1,6 +1,6 @@
 import { db, type Animal, type DailyReport } from '../db/database';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Check if online
 export const isOnline = (): boolean => navigator.onLine;

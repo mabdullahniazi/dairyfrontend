@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { db, getAnimalEmoji, getTodayDate, type Animal } from '../db/database';
+import { db, getTodayDate, type Animal } from '../db/database';
 
 export default function AddReportPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const preselectedAnimalId = searchParams.get('animalId');
+  const preselectedAnimalId = searchParams.get('animal');
 
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [selectedAnimalId, setSelectedAnimalId] = useState<number | null>(
@@ -49,7 +49,6 @@ export default function AddReportPage() {
       return;
     }
 
-    // Check for duplicate
     const today = getTodayDate();
     const existing = await db.dailyReports
       .where('[animalId+date]')
@@ -57,7 +56,7 @@ export default function AddReportPage() {
       .first();
 
     if (existing) {
-      setError('A report already exists for this animal today!');
+      setError('A report already exists for this animal today');
       return;
     }
 
@@ -76,7 +75,7 @@ export default function AddReportPage() {
       navigate('/', { replace: true });
     } catch (err) {
       console.error('Failed to save report:', err);
-      setError('Failed to save report. Please try again.');
+      setError('Failed to save report');
     } finally {
       setSaving(false);
     }
@@ -96,11 +95,11 @@ export default function AddReportPage() {
   if (animals.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-icon">🐄</div>
+        <div className="empty-icon"></div>
         <h3 className="empty-title">No Animals Yet</h3>
         <p className="empty-text">Add your first animal before creating a report.</p>
         <button className="btn btn-primary" onClick={() => navigate('/animals/add')}>
-          + Add Animal
+          Add Animal
         </button>
       </div>
     );
@@ -109,7 +108,7 @@ export default function AddReportPage() {
   return (
     <div>
       <div className="page-title">
-        <h1>📝 Daily Report</h1>
+        <h1>Daily Report</h1>
         <p className="page-subtitle">
           {new Date().toLocaleDateString('en-US', { 
             weekday: 'long', 
@@ -124,7 +123,7 @@ export default function AddReportPage() {
 
       {availableAnimals.length === 0 && !selectedAnimalId && (
         <div className="alert alert-success">
-          ✅ All animals have reports for today! Great job!
+          All animals have reports for today!
         </div>
       )}
 
@@ -132,7 +131,7 @@ export default function AddReportPage() {
         {/* Animal Selector */}
         {!preselectedAnimalId && (
           <div className="form-group">
-            <label className="form-label">Select Animal *</label>
+            <label className="form-label">Select Animal</label>
             <div className="animal-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
               {animals.map(animal => {
                 const hasReport = animalsWithReport.has(animal.id!);
@@ -149,16 +148,15 @@ export default function AddReportPage() {
                       border: selectedAnimalId === animal.id ? '2px solid var(--primary)' : undefined,
                     }}
                   >
-                    <div className="animal-avatar">{getAnimalEmoji(animal.type)}</div>
+                    <div className="animal-avatar" style={{ width: 40, height: 40, fontSize: '0.8rem' }}>
+                      {animal.name.slice(0, 2).toUpperCase()}
+                    </div>
                     <div className="animal-info">
                       <div className="animal-name">{animal.name}</div>
                       <div className="animal-meta">
-                        {hasReport ? '✅ Report added' : animal.type}
+                        {hasReport ? 'Report added' : animal.type}
                       </div>
                     </div>
-                    {!hasReport && selectedAnimalId === animal.id && (
-                      <span style={{ color: 'var(--success)', fontWeight: 600 }}>✓</span>
-                    )}
                   </button>
                 );
               })}
@@ -168,18 +166,20 @@ export default function AddReportPage() {
 
         {/* Selected Animal Display */}
         {preselectedAnimalId && selectedAnimal && (
-          <div className="card mb-lg" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div style={{ fontSize: '2.5rem' }}>{getAnimalEmoji(selectedAnimal.type)}</div>
+          <div className="card mb-lg" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px' }}>
+            <div className="animal-avatar">
+              {selectedAnimal.name.slice(0, 2).toUpperCase()}
+            </div>
             <div>
-              <div style={{ fontWeight: 600, fontSize: '1.125rem' }}>{selectedAnimal.name}</div>
+              <div style={{ fontWeight: 600 }}>{selectedAnimal.name}</div>
               <div className="text-muted">{selectedAnimal.type}</div>
             </div>
           </div>
         )}
 
-        {/* Milk Input */}
+        {/* Milk */}
         <div className="form-group">
-          <label className="form-label">🥛 Milk (Liters)</label>
+          <label className="form-label">Milk (Liters)</label>
           <input
             type="number"
             className="form-input"
@@ -189,13 +189,12 @@ export default function AddReportPage() {
             value={form.milk}
             onChange={(e) => setForm({ ...form, milk: e.target.value })}
             inputMode="decimal"
-            style={{ fontSize: '1.25rem', fontWeight: 600 }}
           />
         </div>
 
-        {/* Feed Input */}
+        {/* Feed */}
         <div className="form-group">
-          <label className="form-label">🌾 Feed (kg)</label>
+          <label className="form-label">Feed (kg)</label>
           <input
             type="number"
             className="form-input"
@@ -205,16 +204,15 @@ export default function AddReportPage() {
             value={form.feed}
             onChange={(e) => setForm({ ...form, feed: e.target.value })}
             inputMode="decimal"
-            style={{ fontSize: '1.25rem', fontWeight: 600 }}
           />
         </div>
 
         {/* Notes */}
         <div className="form-group">
-          <label className="form-label">📝 Notes (Optional)</label>
+          <label className="form-label">Notes (Optional)</label>
           <textarea
             className="form-input"
-            placeholder="Any observations, health notes, etc."
+            placeholder="Any observations..."
             value={form.notes}
             onChange={(e) => setForm({ ...form, notes: e.target.value })}
             rows={3}
