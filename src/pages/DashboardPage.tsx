@@ -1,48 +1,56 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { db, getAnimalEmoji, getTodayDate, type Animal, type DailyReport } from '../db/database';
-import { SkeletonList } from '../components/Loader';
+import { db, getAnimalEmoji, getTodayDate } from '../db/database';
 import MilkChart from '../components/MilkChart';
+import { SkeletonCard } from '../components/Loader';
+
+interface DashboardStats {
+  totalAnimals: number;
+  todayMilk: number;
+  todayReports: number;
+  pendingAnimals: { id: number; name: string; type: string }[];
+}
 
 export default function DashboardPage() {
-  const [animals, setAnimals] = useState<Animal[]>([]);
-  const [todayReports, setTodayReports] = useState<DailyReport[]>([]);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    loadStats();
   }, []);
 
-  const loadData = async () => {
+  const loadStats = async () => {
     try {
-      const allAnimals = await db.animals.toArray();
+      const animals = await db.animals.toArray();
       const today = getTodayDate();
-      const reports = await db.dailyReports.where('date').equals(today).toArray();
+      const todayReports = await db.dailyReports.where('date').equals(today).toArray();
       
-      setAnimals(allAnimals);
-      setTodayReports(reports);
+      // Find animals without today's report
+      const reportedIds = new Set(todayReports.map(r => r.animalId));
+      const pending = animals.filter(a => !reportedIds.has(a.id!));
+
+      setStats({
+        totalAnimals: animals.length,
+        todayMilk: todayReports.reduce((sum, r) => sum + (r.milk || 0), 0),
+        todayReports: todayReports.length,
+        pendingAnimals: pending.map(a => ({ id: a.id!, name: a.name, type: a.type })),
+      });
     } catch (err) {
-      console.error('Failed to load dashboard data:', err);
+      console.error('Failed to load dashboard:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const totalMilk = todayReports.reduce((sum, r) => sum + (r.milk || 0), 0);
-  const animalsWithReport = new Set(todayReports.map(r => r.animalId));
-  const animalsWithoutReport = animals.filter(a => !animalsWithReport.has(a.id!));
-  
-  // Count milk-producing animals (cows and buffalos)
-  const milkAnimals = animals.filter(a => a.type === 'cow' || a.type === 'buffalo');
-
   if (loading) {
     return (
       <div>
         <div className="stat-grid">
-          <div className="stat-card"><div className="skeleton" style={{height: 80}} /></div>
-          <div className="stat-card"><div className="skeleton" style={{height: 80}} /></div>
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
         </div>
-        <SkeletonList count={2} />
       </div>
     );
   }
@@ -52,100 +60,122 @@ export default function DashboardPage() {
       {/* Stats Grid */}
       <div className="stat-grid">
         <div className="stat-card">
-          <div className="stat-icon">🐄</div>
-          <div className="stat-value">{animals.length}</div>
-          <div className="stat-label">Total Animals</div>
+          <div className="stat-card-header">
+            <div>
+              <div className="stat-value">{stats?.totalAnimals || 0}</div>
+              <div className="stat-label">Total Animals</div>
+            </div>
+            <div className="stat-icon blue">🐄</div>
+          </div>
         </div>
+        
         <div className="stat-card">
-          <div className="stat-icon">🥛</div>
-          <div className="stat-value">{totalMilk}L</div>
-          <div className="stat-label">Today's Milk</div>
+          <div className="stat-card-header">
+            <div>
+              <div className="stat-value">{stats?.todayMilk || 0}L</div>
+              <div className="stat-label">Today's Milk</div>
+            </div>
+            <div className="stat-icon green">🥛</div>
+          </div>
+        </div>
+        
+        <div className="stat-card">
+          <div className="stat-card-header">
+            <div>
+              <div className="stat-value">{stats?.todayReports || 0}</div>
+              <div className="stat-label">Reports Today</div>
+            </div>
+            <div className="stat-icon purple">📝</div>
+          </div>
+        </div>
+        
+        <div className="stat-card">
+          <div className="stat-card-header">
+            <div>
+              <div className="stat-value">{stats?.pendingAnimals.length || 0}</div>
+              <div className="stat-label">Pending Reports</div>
+            </div>
+            <div className="stat-icon orange">⏳</div>
+          </div>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      {animalsWithoutReport.length > 0 && (
-        <Link to="/report/add" className="btn btn-primary btn-block mb-lg">
-          📝 Add Today's Report ({animalsWithoutReport.length} pending)
-        </Link>
-      )}
-
-      {animals.length === 0 && (
-        <div className="empty-state">
-          <div className="empty-icon">🐄</div>
-          <h3 className="empty-title">No Animals Yet</h3>
-          <p className="empty-text">Start by adding your first animal to the farm.</p>
-          <Link to="/animals/add" className="btn btn-primary">
-            + Add Animal
-          </Link>
-        </div>
-      )}
-
-      {/* Monthly Chart */}
-      {milkAnimals.length > 0 && (
-        <div className="chart-container">
-          <h3 className="chart-title">📈 Monthly Milk Production</h3>
-          <MilkChart />
-        </div>
-      )}
-
-      {/* Animals Missing Report */}
-      {animalsWithoutReport.length > 0 && (
-        <div className="mb-lg">
-          <div className="section-header">
-            <h3 className="section-title">⏳ Pending Reports</h3>
-            <span className="badge badge-warning">{animalsWithoutReport.length}</span>
-          </div>
-          <div className="animal-list">
-            {animalsWithoutReport.slice(0, 3).map(animal => (
-              <Link
-                key={animal.id}
-                to={`/report/add?animalId=${animal.id}`}
-                className="animal-item"
-              >
-                <div className="animal-avatar">{getAnimalEmoji(animal.type)}</div>
-                <div className="animal-info">
-                  <div className="animal-name">{animal.name}</div>
-                  <div className="animal-meta">Tap to add report</div>
-                </div>
-                <span className="animal-arrow">→</span>
-              </Link>
-            ))}
-          </div>
-          {animalsWithoutReport.length > 3 && (
-            <p className="text-center text-muted mt-md" style={{ fontSize: '0.875rem' }}>
-              +{animalsWithoutReport.length - 3} more animals need reports
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Today's Reports */}
-      {todayReports.length > 0 && (
+      {/* Two Column Layout */}
+      <div className="two-col-layout">
+        {/* Main Content */}
         <div>
-          <div className="section-header">
-            <h3 className="section-title">✅ Today's Reports</h3>
-            <span className="badge badge-success">{todayReports.length}</span>
+          {/* Milk Production Chart */}
+          <div className="chart-container mb-lg">
+            <h3 className="chart-title">Milk Production (Last 14 Days)</h3>
+            <MilkChart />
           </div>
-          <div className="animal-list">
-            {todayReports.map(report => {
-              const animal = animals.find(a => a.id === report.animalId);
-              return (
-                <div key={report.id} className="animal-item">
-                  <div className="animal-avatar">{animal ? getAnimalEmoji(animal.type) : '🐄'}</div>
-                  <div className="animal-info">
-                    <div className="animal-name">{animal?.name || 'Unknown'}</div>
-                    <div className="animal-meta">
-                      🥛 {report.milk}L • 🌾 {report.feed}kg
-                    </div>
-                  </div>
-                  {!report.synced && <span className="badge badge-pending">Pending sync</span>}
-                </div>
-              );
-            })}
+
+          {/* Quick Actions */}
+          <div className="card">
+            <div className="card-header">
+              <span className="section-title">Quick Actions</span>
+            </div>
+            <div className="card-body" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <Link to="/report" className="btn btn-primary">
+                📝 Add Report
+              </Link>
+              <Link to="/animals/add" className="btn btn-secondary">
+                ➕ Add Animal
+              </Link>
+              <Link to="/animals" className="btn btn-outline">
+                📋 View All Animals
+              </Link>
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Sidebar Content */}
+        <div>
+          {/* Pending Reports */}
+          <div className="card">
+            <div className="card-header">
+              <span className="section-title">Pending Reports</span>
+              {stats?.pendingAnimals.length ? (
+                <span className="badge badge-warning">
+                  {stats.pendingAnimals.length} remaining
+                </span>
+              ) : null}
+            </div>
+            <div className="card-body">
+              {!stats?.pendingAnimals.length ? (
+                <div className="text-center text-muted" style={{ padding: '24px 0' }}>
+                  <div style={{ fontSize: '2rem', marginBottom: '8px' }}>✅</div>
+                  <p>All reports complete!</p>
+                </div>
+              ) : (
+                <div className="animal-list">
+                  {stats.pendingAnimals.slice(0, 5).map(animal => (
+                    <Link 
+                      key={animal.id}
+                      to={`/report?animal=${animal.id}`}
+                      className="animal-item"
+                    >
+                      <div className="animal-avatar" style={{ width: 40, height: 40, fontSize: '1.25rem' }}>
+                        {getAnimalEmoji(animal.type)}
+                      </div>
+                      <div className="animal-info">
+                        <div className="animal-name" style={{ fontSize: '0.9rem' }}>{animal.name}</div>
+                        <div className="animal-meta">{animal.type}</div>
+                      </div>
+                      <span className="badge badge-pending">Add</span>
+                    </Link>
+                  ))}
+                  {stats.pendingAnimals.length > 5 && (
+                    <Link to="/report" className="btn btn-ghost btn-block mt-md">
+                      View all {stats.pendingAnimals.length} pending
+                    </Link>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

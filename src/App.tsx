@@ -19,7 +19,7 @@ function App() {
           <Route path="animals/add" element={<AnimalFormPage />} />
           <Route path="animals/edit/:id" element={<AnimalFormPage />} />
           <Route path="animals/:id" element={<AnimalDetailsPage />} />
-          <Route path="report/add" element={<AddReportPage />} />
+          <Route path="report" element={<AddReportPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

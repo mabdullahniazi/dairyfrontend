@@ -1,54 +1,96 @@
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import OnlineIndicator from './OnlineIndicator';
 
 export default function Layout() {
   const location = useLocation();
-  const navigate = useNavigate();
-  
-  // Check if we're on a sub-page (not main navigation pages)
-  const isSubPage = location.pathname.includes('/add') || 
-                    location.pathname.includes('/edit') ||
-                    (location.pathname.includes('/animals/') && location.pathname !== '/animals');
+  const isSubPage = location.pathname.includes('/animal/') ||
+    location.pathname.includes('/add') ||
+    location.pathname.includes('/edit') ||
+    location.pathname.includes('/report');
+
+  const isActive = (path: string) => location.pathname === path;
+
+  const navItems = [
+    { path: '/', icon: '📊', label: 'Dashboard' },
+    { path: '/animals', icon: '🐄', label: 'Animals' },
+    { path: '/report', icon: '📝', label: 'Add Report' },
+  ];
 
   return (
     <div className="app-container">
-      {/* Header */}
-      <header className="header">
-        {isSubPage ? (
-          <button className="back-btn" onClick={() => navigate(-1)}>
-            ← Back
-          </button>
-        ) : (
-          <div className="header-logo">
-            <img src="/icons/icon-192.png" alt="Livestock Manager" />
-            <span className="header-title">Livestock</span>
+      {/* Desktop Sidebar */}
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <div className="sidebar-logo">
+            <img src="/icons/icon-192.png" alt="Logo" />
+            <div>
+              <div className="sidebar-logo-text">Livestock</div>
+              <div className="sidebar-logo-sub">Management System</div>
+            </div>
           </div>
-        )}
-        <OnlineIndicator />
-      </header>
+        </div>
+
+        <nav className="sidebar-nav">
+          <div className="nav-section-title">Main Menu</div>
+          {navItems.map(({ path, icon, label }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`nav-item ${isActive(path) ? 'active' : ''}`}
+            >
+              <span className="nav-icon">{icon}</span>
+              {label}
+            </Link>
+          ))}
+
+          <div className="nav-section-title">Quick Actions</div>
+          <Link to="/animals/add" className="nav-item">
+            <span className="nav-icon">➕</span>
+            Add Animal
+          </Link>
+        </nav>
+
+        <div style={{ padding: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <OnlineIndicator />
+        </div>
+      </aside>
 
       {/* Main Content */}
-      <main className="page">
-        <Outlet />
-      </main>
+      <main className="main-content">
+        <header className="header">
+          <h1 className="header-title">
+            {location.pathname === '/' && 'Dashboard'}
+            {location.pathname === '/animals' && 'Animals'}
+            {location.pathname === '/report' && 'Add Report'}
+            {location.pathname.includes('/animal/') && 'Animal Details'}
+            {location.pathname.includes('/add') && 'Add Animal'}
+            {location.pathname.includes('/edit') && 'Edit Animal'}
+          </h1>
+          <div className="header-actions">
+            <OnlineIndicator />
+          </div>
+        </header>
 
-      {/* Bottom Navigation - hide on sub-pages */}
-      {!isSubPage && (
-        <nav className="bottom-nav">
-          <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
-            <span className="nav-icon">🏠</span>
-            <span>Home</span>
-          </NavLink>
-          <NavLink to="/animals" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <span className="nav-icon">🐄</span>
-            <span>Animals</span>
-          </NavLink>
-          <NavLink to="/report/add" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <span className="nav-icon">📝</span>
-            <span>Report</span>
-          </NavLink>
-        </nav>
-      )}
+        <div className="page">
+          <Outlet />
+        </div>
+
+        {/* Mobile Bottom Navigation */}
+        {!isSubPage && (
+          <nav className="bottom-nav">
+            {navItems.map(({ path, icon, label }) => (
+              <Link
+                key={path}
+                to={path}
+                className={`nav-item ${isActive(path) ? 'active' : ''}`}
+              >
+                <span className="nav-icon">{icon}</span>
+                {label}
+              </Link>
+            ))}
+          </nav>
+        )}
+      </main>
     </div>
   );
 }

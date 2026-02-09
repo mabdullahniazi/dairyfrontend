@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 
 export default function OnlineIndicator() {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [online, setOnline] = useState(navigator.onLine);
 
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    const handleOnline = () => setOnline(true);
+    const handleOffline = () => setOnline(false);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -18,8 +18,8 @@ export default function OnlineIndicator() {
 
   return (
     <div className="status-indicator">
-      <span className={`status-dot ${isOnline ? 'online' : 'offline'}`} />
-      <span>{isOnline ? 'Online' : 'Offline'}</span>
+      <span className={`status-dot ${online ? 'online' : 'offline'}`} />
+      <span>{online ? 'Online' : 'Offline'}</span>
     </div>
   );
 }

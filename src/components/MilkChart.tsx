@@ -18,7 +18,6 @@ export default function MilkChart() {
 
   const loadChartData = async () => {
     try {
-      // Get last 30 days
       const today = new Date();
       const thirtyDaysAgo = new Date(today);
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -33,7 +32,6 @@ export default function MilkChart() {
         )
         .toArray();
 
-      // Aggregate by date
       const dailyTotals: Record<string, number> = {};
       reports.forEach(report => {
         if (!dailyTotals[report.date]) {
@@ -42,7 +40,6 @@ export default function MilkChart() {
         dailyTotals[report.date] += report.milk || 0;
       });
 
-      // Create chart data for last 14 days (more readable on mobile)
       const chartData: ChartData[] = [];
       for (let i = 13; i >= 0; i--) {
         const date = new Date(today);
@@ -67,7 +64,7 @@ export default function MilkChart() {
 
   if (loading) {
     return (
-      <div className="skeleton" style={{ height: 150, borderRadius: 8 }} />
+      <div className="skeleton" style={{ height: 200, borderRadius: 8 }} />
     );
   }
 
@@ -76,24 +73,25 @@ export default function MilkChart() {
 
   if (!hasData) {
     return (
-      <div className="text-center text-muted" style={{ padding: '24px 0' }}>
-        <p>No milk data yet.</p>
+      <div className="text-center text-muted" style={{ padding: '40px 0' }}>
+        <div style={{ fontSize: '2.5rem', marginBottom: '12px', opacity: 0.3 }}>📊</div>
+        <p style={{ fontWeight: 500 }}>No milk data yet</p>
         <p style={{ fontSize: '0.875rem' }}>Start adding daily reports to see the chart.</p>
       </div>
     );
   }
 
   return (
-    <ResponsiveContainer width="100%" height={150}>
+    <ResponsiveContainer width="100%" height={200}>
       <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
         <XAxis 
           dataKey="day" 
-          tick={{ fontSize: 10, fill: '#757575' }}
+          tick={{ fontSize: 11, fill: '#64748B' }}
           axisLine={false}
           tickLine={false}
         />
         <YAxis 
-          tick={{ fontSize: 10, fill: '#757575' }}
+          tick={{ fontSize: 11, fill: '#64748B' }}
           axisLine={false}
           tickLine={false}
           tickFormatter={(value) => `${value}L`}
@@ -103,16 +101,17 @@ export default function MilkChart() {
           labelFormatter={(label) => label}
           contentStyle={{ 
             background: '#fff', 
-            border: '1px solid #e0e0e0',
+            border: '1px solid #E2E8F0',
             borderRadius: 8,
-            fontSize: 12 
+            fontSize: 13,
+            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
           }}
         />
         <Bar dataKey="milk" radius={[4, 4, 0, 0]}>
           {data.map((entry, index) => (
             <Cell 
               key={`cell-${index}`} 
-              fill={entry.milk > 0 ? (entry.milk >= maxMilk * 0.8 ? '#7CB342' : '#8BC34A') : '#E0E0E0'} 
+              fill={entry.milk > 0 ? (entry.milk >= maxMilk * 0.8 ? '#3B82F6' : '#60A5FA') : '#E2E8F0'} 
             />
           ))}
         </Bar>
