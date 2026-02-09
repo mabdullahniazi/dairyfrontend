@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { db, type Animal } from '../db/database';
 
 type AnimalType = 'cow' | 'buffalo' | 'goat' | 'sheep';
-
 const animalTypes: AnimalType[] = ['cow', 'buffalo', 'goat', 'sheep'];
 
 export default function AnimalFormPage() {
@@ -17,15 +16,13 @@ export default function AnimalFormPage() {
     type: 'cow' as AnimalType,
     age: 0,
   });
-  const [customAttributes, setCustomAttributes] = useState<{ key: string; value: string }[]>([]);
+  const [attrs, setAttrs] = useState<{ key: string; value: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (isEditing) {
-      loadAnimal();
-    }
+    if (isEditing) loadAnimal();
   }, [id]);
 
   const loadAnimal = async () => {
@@ -39,15 +36,10 @@ export default function AnimalFormPage() {
           type: animal.type,
           age: animal.age,
         });
-        // Convert attributes object to array
-        const attrs = Object.entries(animal.attributes || {}).map(([key, value]) => ({
-          key,
-          value: String(value),
-        }));
-        setCustomAttributes(attrs);
+        setAttrs(Object.entries(animal.attributes || {}).map(([key, value]) => ({ key, value: String(value) })));
       }
     } catch (err) {
-      console.error('Failed to load animal:', err);
+      console.error('Load failed:', err);
     } finally {
       setLoading(false);
     }
@@ -56,23 +48,19 @@ export default function AnimalFormPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
     if (!form.name.trim()) {
-      setError('Please enter animal name');
+      setError('Name is required');
       return;
     }
 
     setSaving(true);
     try {
-      // Convert custom attributes array to object
       const attributes: Record<string, string> = {};
-      customAttributes.forEach(({ key, value }) => {
-        if (key.trim()) {
-          attributes[key.trim()] = value;
-        }
+      attrs.forEach(({ key, value }) => {
+        if (key.trim()) attributes[key.trim()] = value;
       });
 
-      const animalData: Omit<Animal, 'id'> = {
+      const data: Omit<Animal, 'id'> = {
         name: form.name.trim(),
         tagNumber: form.tagNumber.trim(),
         type: form.type,
@@ -84,130 +72,95 @@ export default function AnimalFormPage() {
       };
 
       if (isEditing) {
-        await db.animals.update(Number(id), {
-          ...animalData,
-          updatedAt: new Date(),
-        });
+        await db.animals.update(Number(id), { ...data, updatedAt: new Date() });
       } else {
-        await db.animals.add(animalData);
+        await db.animals.add(data);
       }
-
       navigate('/animals', { replace: true });
     } catch (err) {
-      console.error('Failed to save animal:', err);
-      setError('Failed to save. Please try again.');
+      console.error('Save failed:', err);
+      setError('Failed to save');
     } finally {
       setSaving(false);
     }
   };
 
-  const addCustomAttribute = () => {
-    setCustomAttributes([...customAttributes, { key: '', value: '' }]);
-  };
-
-  const removeCustomAttribute = (index: number) => {
-    setCustomAttributes(customAttributes.filter((_, i) => i !== index));
-  };
-
-  const updateCustomAttribute = (index: number, field: 'key' | 'value', value: string) => {
-    const updated = [...customAttributes];
-    updated[index][field] = value;
-    setCustomAttributes(updated);
-  };
-
-  if (loading) {
-    return (
-      <div className="loader">
-        <div className="spinner" />
-      </div>
-    );
-  }
+  if (loading) return <div className="loader"><div className="spinner" /></div>;
 
   return (
     <div>
-      <div className="page-title">
-        <h1>{isEditing ? 'Edit Animal' : 'Add Animal'}</h1>
-        <p className="page-subtitle">
-          {isEditing ? 'Update animal information' : 'Add a new animal to your farm'}
-        </p>
-      </div>
+      <h2 className="mb-4">{isEditing ? 'Edit Animal' : 'Add Animal'}</h2>
 
       {error && <div className="alert alert-error">{error}</div>}
 
       <form onSubmit={handleSubmit}>
-        {/* Name */}
         <div className="form-group">
-          <label className="form-label">Name *</label>
+          <label className="form-label">Name</label>
           <input
             type="text"
             className="form-input"
-            placeholder="e.g. Ganga, Lakshmi"
+            placeholder="e.g. Ganga"
             value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            onChange={e => setForm({ ...form, name: e.target.value })}
             autoFocus
           />
         </div>
 
-        {/* Tag Number */}
         <div className="form-group">
-          <label className="form-label">Tag Number (Optional)</label>
+          <label className="form-label">Tag Number</label>
           <input
             type="text"
             className="form-input"
-            placeholder="e.g. A001, 1234"
+            placeholder="e.g. A001"
             value={form.tagNumber}
-            onChange={(e) => setForm({ ...form, tagNumber: e.target.value })}
+            onChange={e => setForm({ ...form, tagNumber: e.target.value })}
           />
         </div>
 
-        {/* Animal Type */}
         <div className="form-group">
-          <label className="form-label">Type *</label>
-          <div className="type-selector">
-            {animalTypes.map((type) => (
+          <label className="form-label">Type</label>
+          <div className="type-picker">
+            {animalTypes.map(t => (
               <button
-                key={type}
+                key={t}
                 type="button"
-                className={`type-option ${form.type === type ? 'selected' : ''}`}
-                onClick={() => setForm({ ...form, type })}
+                className={`type-btn ${form.type === t ? 'selected' : ''}`}
+                onClick={() => setForm({ ...form, type: t })}
               >
-                <span className="type-option-icon">{type.slice(0, 2).toUpperCase()}</span>
-                <span className="type-option-label">{type}</span>
+                <div className="type-btn-code">{t.slice(0, 2).toUpperCase()}</div>
+                <div className="type-btn-name">{t}</div>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Age */}
         <div className="form-group">
           <label className="form-label">Age (Years)</label>
           <input
             type="number"
             className="form-input"
-            placeholder="0"
             min="0"
             max="30"
             value={form.age || ''}
-            onChange={(e) => setForm({ ...form, age: parseInt(e.target.value) || 0 })}
+            onChange={e => setForm({ ...form, age: parseInt(e.target.value) || 0 })}
           />
         </div>
 
-        {/* Custom Attributes */}
         <div className="form-group">
-          <div className="section-header">
-            <label className="form-label" style={{ marginBottom: 0 }}>Custom Details</label>
-            <button type="button" className="btn btn-sm btn-outline" onClick={addCustomAttribute}>
+          <div className="flex gap-4 mb-4" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+            <label className="form-label" style={{ margin: 0 }}>Custom Fields</label>
+            <button type="button" className="btn btn-sm btn-outline" onClick={() => setAttrs([...attrs, { key: '', value: '' }])}>
               + Add
             </button>
           </div>
-          {customAttributes.map((attr, index) => (
-            <div key={index} className="flex gap-sm mb-md" style={{ marginTop: index === 0 ? '12px' : 0 }}>
+          {attrs.map((attr, i) => (
+            <div key={i} className="flex gap-2 mb-4">
               <input
                 type="text"
                 className="form-input"
-                placeholder="Field name"
+                placeholder="Field"
                 value={attr.key}
-                onChange={(e) => updateCustomAttribute(index, 'key', e.target.value)}
+                onChange={e => { const u = [...attrs]; u[i].key = e.target.value; setAttrs(u); }}
                 style={{ flex: 1 }}
               />
               <input
@@ -215,45 +168,24 @@ export default function AnimalFormPage() {
                 className="form-input"
                 placeholder="Value"
                 value={attr.value}
-                onChange={(e) => updateCustomAttribute(index, 'value', e.target.value)}
+                onChange={e => { const u = [...attrs]; u[i].value = e.target.value; setAttrs(u); }}
                 style={{ flex: 1 }}
               />
-              <button
-                type="button"
-                className="btn btn-sm btn-danger"
-                onClick={() => removeCustomAttribute(index)}
-                style={{ padding: '8px 12px' }}
-              >
+              <button type="button" className="btn btn-sm btn-danger" onClick={() => setAttrs(attrs.filter((_, j) => j !== i))}>
                 X
               </button>
             </div>
           ))}
-          {customAttributes.length === 0 && (
-            <p className="text-muted" style={{ fontSize: '0.875rem', marginTop: '8px' }}>
-              Add custom fields like milk/day, breed, color, etc.
-            </p>
-          )}
         </div>
 
         <hr className="divider" />
 
-        {/* Submit */}
-        <div className="flex gap-sm">
-          <button
-            type="button"
-            className="btn btn-outline"
-            onClick={() => navigate(-1)}
-            style={{ flex: 1 }}
-          >
+        <div className="flex gap-3">
+          <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => navigate(-1)}>
             Cancel
           </button>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={saving}
-            style={{ flex: 2 }}
-          >
-            {saving ? 'Saving...' : isEditing ? 'Update Animal' : 'Add Animal'}
+          <button type="submit" className="btn btn-sage" style={{ flex: 2 }} disabled={saving}>
+            {saving ? 'Saving...' : isEditing ? 'Update' : 'Add Animal'}
           </button>
         </div>
       </form>

@@ -6,10 +6,8 @@ export default function OnlineIndicator() {
   useEffect(() => {
     const handleOnline = () => setOnline(true);
     const handleOffline = () => setOnline(false);
-
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -17,8 +15,8 @@ export default function OnlineIndicator() {
   }, []);
 
   return (
-    <div className="status-indicator">
-      <span className={`status-dot ${online ? 'online' : 'offline'}`} />
+    <div className="status">
+      <span className={`status-dot ${online ? 'on' : 'off'}`} />
       <span>{online ? 'Online' : 'Offline'}</span>
     </div>
   );

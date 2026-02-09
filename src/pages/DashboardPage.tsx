@@ -4,22 +4,22 @@ import { db, getTodayDate } from '../db/database';
 import MilkChart from '../components/MilkChart';
 import { SkeletonCard } from '../components/Loader';
 
-interface DashboardStats {
-  totalAnimals: number;
-  todayMilk: number;
-  todayReports: number;
-  pendingAnimals: { id: number; name: string; type: string }[];
+interface Stats {
+  total: number;
+  milk: number;
+  reports: number;
+  pending: { id: number; name: string; type: string }[];
 }
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadStats();
+    load();
   }, []);
 
-  const loadStats = async () => {
+  const load = async () => {
     try {
       const animals = await db.animals.toArray();
       const today = getTodayDate();
@@ -28,13 +28,13 @@ export default function DashboardPage() {
       const pending = animals.filter(a => !reportedIds.has(a.id!));
 
       setStats({
-        totalAnimals: animals.length,
-        todayMilk: todayReports.reduce((sum, r) => sum + (r.milk || 0), 0),
-        todayReports: todayReports.length,
-        pendingAnimals: pending.map(a => ({ id: a.id!, name: a.name, type: a.type })),
+        total: animals.length,
+        milk: todayReports.reduce((sum, r) => sum + (r.milk || 0), 0),
+        reports: todayReports.length,
+        pending: pending.map(a => ({ id: a.id!, name: a.name, type: a.type })),
       });
     } catch (err) {
-      console.error('Failed to load dashboard:', err);
+      console.error('Load failed:', err);
     } finally {
       setLoading(false);
     }
@@ -42,7 +42,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="stat-grid">
+      <div className="stats">
         <SkeletonCard />
         <SkeletonCard />
         <SkeletonCard />
@@ -54,65 +54,42 @@ export default function DashboardPage() {
   return (
     <div>
       {/* Stats */}
-      <div className="stat-grid">
-        <div className="stat-card">
-          <div className="stat-card-header">
-            <div>
-              <div className="stat-value">{stats?.totalAnimals || 0}</div>
-              <div className="stat-label">Total Animals</div>
-            </div>
-            <div className="stat-icon blue">A</div>
-          </div>
+      <div className="stats">
+        <div className="stat">
+          <div className="stat-num">{stats?.total || 0}</div>
+          <div className="stat-name">Animals</div>
         </div>
-        
-        <div className="stat-card">
-          <div className="stat-card-header">
-            <div>
-              <div className="stat-value">{stats?.todayMilk || 0}L</div>
-              <div className="stat-label">Today's Milk</div>
-            </div>
-            <div className="stat-icon green">M</div>
-          </div>
+        <div className="stat">
+          <div className="stat-num">{stats?.milk || 0}L</div>
+          <div className="stat-name">Milk Today</div>
         </div>
-        
-        <div className="stat-card">
-          <div className="stat-card-header">
-            <div>
-              <div className="stat-value">{stats?.todayReports || 0}</div>
-              <div className="stat-label">Reports Today</div>
-            </div>
-            <div className="stat-icon purple">R</div>
-          </div>
+        <div className="stat">
+          <div className="stat-num">{stats?.reports || 0}</div>
+          <div className="stat-name">Reports</div>
         </div>
-        
-        <div className="stat-card">
-          <div className="stat-card-header">
-            <div>
-              <div className="stat-value">{stats?.pendingAnimals.length || 0}</div>
-              <div className="stat-label">Pending</div>
-            </div>
-            <div className="stat-icon orange">P</div>
-          </div>
+        <div className="stat">
+          <div className="stat-num">{stats?.pending.length || 0}</div>
+          <div className="stat-name">Pending</div>
         </div>
       </div>
 
-      <div className="two-col-layout">
+      <div className="two-col">
         <div>
           {/* Chart */}
-          <div className="chart-container mb-lg">
-            <h3 className="chart-title">Milk Production (Last 14 Days)</h3>
+          <div className="chart-wrap">
+            <div className="chart-head">Milk Production (14 days)</div>
             <MilkChart />
           </div>
 
           {/* Actions */}
           <div className="card">
-            <div className="card-header">
-              <span className="section-title">Quick Actions</span>
+            <div className="card-head">
+              <span className="card-title">Quick Actions</span>
             </div>
-            <div className="card-body" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              <Link to="/report" className="btn btn-primary">Add Report</Link>
-              <Link to="/animals/add" className="btn btn-secondary">Add Animal</Link>
-              <Link to="/animals" className="btn btn-outline">View Animals</Link>
+            <div className="card-body flex gap-3">
+              <Link to="/report" className="btn btn-sage">New Report</Link>
+              <Link to="/animals/add" className="btn btn-brown">Add Animal</Link>
+              <Link to="/animals" className="btn btn-outline">View All</Link>
             </div>
           </div>
         </div>
@@ -120,34 +97,23 @@ export default function DashboardPage() {
         <div>
           {/* Pending */}
           <div className="card">
-            <div className="card-header">
-              <span className="section-title">Pending Reports</span>
-              {stats?.pendingAnimals.length ? (
-                <span className="badge badge-warning">{stats.pendingAnimals.length}</span>
-              ) : null}
+            <div className="card-head">
+              <span className="card-title">Pending Reports</span>
+              {stats?.pending.length ? <span className="tag tag-terra">{stats.pending.length}</span> : null}
             </div>
             <div className="card-body">
-              {!stats?.pendingAnimals.length ? (
-                <div className="text-center text-muted" style={{ padding: '20px 0' }}>
-                  <p style={{ fontWeight: 500 }}>All done!</p>
-                  <p style={{ fontSize: '0.8rem' }}>No pending reports</p>
-                </div>
+              {!stats?.pending.length ? (
+                <div className="text-center text-muted">All done!</div>
               ) : (
                 <div className="animal-list">
-                  {stats.pendingAnimals.slice(0, 5).map(animal => (
-                    <Link 
-                      key={animal.id}
-                      to={`/report?animal=${animal.id}`}
-                      className="animal-item"
-                    >
-                      <div className="animal-avatar" style={{ width: 36, height: 36, fontSize: '0.75rem' }}>
-                        {animal.name.slice(0, 2).toUpperCase()}
-                      </div>
+                  {stats.pending.slice(0, 4).map(a => (
+                    <Link key={a.id} to={`/report?animal=${a.id}`} className="animal-row">
+                      <div className="avatar">{a.name.slice(0, 2).toUpperCase()}</div>
                       <div className="animal-info">
-                        <div className="animal-name" style={{ fontSize: '0.9rem' }}>{animal.name}</div>
-                        <div className="animal-meta">{animal.type}</div>
+                        <div className="animal-name">{a.name}</div>
+                        <div className="animal-type">{a.type}</div>
                       </div>
-                      <span className="badge badge-pending">Add</span>
+                      <span className="tag tag-sage">Add</span>
                     </Link>
                   ))}
                 </div>

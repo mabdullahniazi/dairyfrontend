@@ -1,31 +1,21 @@
 export default function Loader({ text = 'Loading...' }: { text?: string }) {
   return (
     <div className="loader">
-      <div style={{ textAlign: 'center' }}>
-        <div className="spinner" />
-        <p className="text-muted mt-md" style={{ fontSize: '0.875rem' }}>{text}</p>
-      </div>
+      <div className="spinner" />
+      {text && <span className="text-muted" style={{ marginLeft: 12 }}>{text}</span>}
     </div>
   );
 }
 
 export function SkeletonCard() {
-  return (
-    <div className="animal-item">
-      <div className="skeleton skeleton-avatar" />
-      <div className="animal-info" style={{ flex: 1 }}>
-        <div className="skeleton skeleton-title" />
-        <div className="skeleton skeleton-text" style={{ width: '40%' }} />
-      </div>
-    </div>
-  );
+  return <div className="skeleton" style={{ height: 80, borderRadius: 16 }} />;
 }
 
 export function SkeletonList({ count = 3 }: { count?: number }) {
   return (
-    <div className="animal-list">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       {Array.from({ length: count }).map((_, i) => (
-        <SkeletonCard key={i} />
+        <div key={i} className="skeleton" style={{ height: 56, borderRadius: 10 }} />
       ))}
     </div>
   );

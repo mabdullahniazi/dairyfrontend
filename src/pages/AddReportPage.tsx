@@ -5,36 +5,29 @@ import { db, getTodayDate, type Animal } from '../db/database';
 export default function AddReportPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const preselectedAnimalId = searchParams.get('animal');
+  const preselectedId = searchParams.get('animal');
 
   const [animals, setAnimals] = useState<Animal[]>([]);
-  const [selectedAnimalId, setSelectedAnimalId] = useState<number | null>(
-    preselectedAnimalId ? Number(preselectedAnimalId) : null
-  );
-  const [form, setForm] = useState({
-    milk: '',
-    feed: '',
-    notes: '',
-  });
+  const [selectedId, setSelectedId] = useState<number | null>(preselectedId ? Number(preselectedId) : null);
+  const [form, setForm] = useState({ milk: '', feed: '', notes: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [animalsWithReport, setAnimalsWithReport] = useState<Set<number>>(new Set());
+  const [reported, setReported] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    loadData();
+    load();
   }, []);
 
-  const loadData = async () => {
+  const load = async () => {
     try {
-      const allAnimals = await db.animals.toArray();
+      const all = await db.animals.toArray();
       const today = getTodayDate();
       const todayReports = await db.dailyReports.where('date').equals(today).toArray();
-      
-      setAnimals(allAnimals);
-      setAnimalsWithReport(new Set(todayReports.map(r => r.animalId)));
+      setAnimals(all);
+      setReported(new Set(todayReports.map(r => r.animalId)));
     } catch (err) {
-      console.error('Failed to load data:', err);
+      console.error('Load failed:', err);
     } finally {
       setLoading(false);
     }
@@ -43,27 +36,22 @@ export default function AddReportPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
-    if (!selectedAnimalId) {
-      setError('Please select an animal');
+    if (!selectedId) {
+      setError('Select an animal');
       return;
     }
 
     const today = getTodayDate();
-    const existing = await db.dailyReports
-      .where('[animalId+date]')
-      .equals([selectedAnimalId, today])
-      .first();
-
-    if (existing) {
-      setError('A report already exists for this animal today');
+    const exists = await db.dailyReports.where('[animalId+date]').equals([selectedId, today]).first();
+    if (exists) {
+      setError('Report already exists for today');
       return;
     }
 
     setSaving(true);
     try {
       await db.dailyReports.add({
-        animalId: selectedAnimalId,
+        animalId: selectedId,
         date: today,
         milk: parseFloat(form.milk) || 0,
         feed: parseFloat(form.feed) || 0,
@@ -71,91 +59,65 @@ export default function AddReportPage() {
         synced: false,
         createdAt: new Date(),
       });
-
       navigate('/', { replace: true });
     } catch (err) {
-      console.error('Failed to save report:', err);
-      setError('Failed to save report');
+      console.error('Save failed:', err);
+      setError('Failed to save');
     } finally {
       setSaving(false);
     }
   };
 
-  const selectedAnimal = animals.find(a => a.id === selectedAnimalId);
-  const availableAnimals = animals.filter(a => !animalsWithReport.has(a.id!));
+  const selected = animals.find(a => a.id === selectedId);
 
-  if (loading) {
-    return (
-      <div className="loader">
-        <div className="spinner" />
-      </div>
-    );
-  }
+  if (loading) return <div className="loader"><div className="spinner" /></div>;
 
   if (animals.length === 0) {
     return (
-      <div className="empty-state">
-        <div className="empty-icon"></div>
-        <h3 className="empty-title">No Animals Yet</h3>
-        <p className="empty-text">Add your first animal before creating a report.</p>
-        <button className="btn btn-primary" onClick={() => navigate('/animals/add')}>
-          Add Animal
-        </button>
+      <div className="empty">
+        <div className="empty-circle"></div>
+        <div className="empty-title">No Animals</div>
+        <p className="empty-text">Add an animal first.</p>
+        <button className="btn btn-sage" onClick={() => navigate('/animals/add')}>Add Animal</button>
       </div>
     );
   }
 
   return (
     <div>
-      <div className="page-title">
-        <h1>Daily Report</h1>
-        <p className="page-subtitle">
-          {new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}
-        </p>
-      </div>
+      <p className="text-muted mb-6">
+        {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+      </p>
 
       {error && <div className="alert alert-error">{error}</div>}
 
-      {availableAnimals.length === 0 && !selectedAnimalId && (
-        <div className="alert alert-success">
-          All animals have reports for today!
-        </div>
-      )}
-
       <form onSubmit={handleSubmit}>
-        {/* Animal Selector */}
-        {!preselectedAnimalId && (
+        {/* Animal Selection */}
+        {!preselectedId && (
           <div className="form-group">
             <label className="form-label">Select Animal</label>
-            <div className="animal-list" style={{ maxHeight: '200px', overflowY: 'auto' }}>
-              {animals.map(animal => {
-                const hasReport = animalsWithReport.has(animal.id!);
+            <div className="animal-list" style={{ maxHeight: '180px', overflowY: 'auto' }}>
+              {animals.map(a => {
+                const done = reported.has(a.id!);
                 return (
                   <button
-                    key={animal.id}
+                    key={a.id}
                     type="button"
-                    className={`animal-item ${selectedAnimalId === animal.id ? 'selected' : ''}`}
-                    onClick={() => !hasReport && setSelectedAnimalId(animal.id!)}
-                    disabled={hasReport}
+                    className="animal-row"
+                    onClick={() => !done && setSelectedId(a.id!)}
+                    disabled={done}
                     style={{
-                      opacity: hasReport ? 0.5 : 1,
-                      cursor: hasReport ? 'not-allowed' : 'pointer',
-                      border: selectedAnimalId === animal.id ? '2px solid var(--primary)' : undefined,
+                      opacity: done ? 0.4 : 1,
+                      cursor: done ? 'not-allowed' : 'pointer',
+                      border: selectedId === a.id ? '2px solid var(--sage)' : undefined,
                     }}
                   >
-                    <div className="animal-avatar" style={{ width: 40, height: 40, fontSize: '0.8rem' }}>
-                      {animal.name.slice(0, 2).toUpperCase()}
+                    <div className="avatar" style={{ width: 36, height: 36, fontSize: '0.75rem' }}>
+                      {a.name.slice(0, 2).toUpperCase()}
                     </div>
                     <div className="animal-info">
-                      <div className="animal-name">{animal.name}</div>
-                      <div className="animal-meta">
-                        {hasReport ? 'Report added' : animal.type}
-                      </div>
+                      <div className="animal-name">{a.name}</div>
+                      <div className="animal-type">{done ? 'Done' : a.type}</div>
                     </div>
                   </button>
                 );
@@ -164,20 +126,18 @@ export default function AddReportPage() {
           </div>
         )}
 
-        {/* Selected Animal Display */}
-        {preselectedAnimalId && selectedAnimal && (
-          <div className="card mb-lg" style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px' }}>
-            <div className="animal-avatar">
-              {selectedAnimal.name.slice(0, 2).toUpperCase()}
-            </div>
+        {/* Selected Display */}
+        {preselectedId && selected && (
+          <div className="card mb-4 flex gap-4" style={{ padding: '16px', alignItems: 'center' }}>
+            <div className="avatar">{selected.name.slice(0, 2).toUpperCase()}</div>
             <div>
-              <div style={{ fontWeight: 600 }}>{selectedAnimal.name}</div>
-              <div className="text-muted">{selectedAnimal.type}</div>
+              <div style={{ fontWeight: 600 }}>{selected.name}</div>
+              <div className="text-muted">{selected.type}</div>
             </div>
           </div>
         )}
 
-        {/* Milk */}
+        {/* Inputs */}
         <div className="form-group">
           <label className="form-label">Milk (Liters)</label>
           <input
@@ -187,12 +147,11 @@ export default function AddReportPage() {
             min="0"
             step="0.5"
             value={form.milk}
-            onChange={(e) => setForm({ ...form, milk: e.target.value })}
+            onChange={e => setForm({ ...form, milk: e.target.value })}
             inputMode="decimal"
           />
         </div>
 
-        {/* Feed */}
         <div className="form-group">
           <label className="form-label">Feed (kg)</label>
           <input
@@ -202,41 +161,29 @@ export default function AddReportPage() {
             min="0"
             step="0.5"
             value={form.feed}
-            onChange={(e) => setForm({ ...form, feed: e.target.value })}
+            onChange={e => setForm({ ...form, feed: e.target.value })}
             inputMode="decimal"
           />
         </div>
 
-        {/* Notes */}
         <div className="form-group">
-          <label className="form-label">Notes (Optional)</label>
+          <label className="form-label">Notes</label>
           <textarea
             className="form-input"
-            placeholder="Any observations..."
+            placeholder="Any notes..."
             value={form.notes}
-            onChange={(e) => setForm({ ...form, notes: e.target.value })}
-            rows={3}
+            onChange={e => setForm({ ...form, notes: e.target.value })}
+            rows={2}
           />
         </div>
 
         <hr className="divider" />
 
-        {/* Submit */}
-        <div className="flex gap-sm">
-          <button
-            type="button"
-            className="btn btn-outline"
-            onClick={() => navigate(-1)}
-            style={{ flex: 1 }}
-          >
+        <div className="flex gap-3">
+          <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => navigate(-1)}>
             Cancel
           </button>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={saving || !selectedAnimalId}
-            style={{ flex: 2 }}
-          >
+          <button type="submit" className="btn btn-sage" style={{ flex: 2 }} disabled={saving || !selectedId}>
             {saving ? 'Saving...' : 'Save Report'}
           </button>
         </div>
