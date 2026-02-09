@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { db, getTodayDate, type Animal } from "../db/database";
+import { isOnline, pullAnimals, pullReports } from "../services/syncService";
 
 export default function AddReportPage() {
   const navigate = useNavigate();
@@ -18,7 +19,16 @@ export default function AddReportPage() {
   const [reported, setReported] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    load();
+    const init = async () => {
+      // Pull from server first if online
+      if (isOnline()) {
+        console.log("[AddReport] Pulling data from server...");
+        await pullAnimals();
+        await pullReports();
+      }
+      await load();
+    };
+    init();
   }, []);
 
   const load = async () => {

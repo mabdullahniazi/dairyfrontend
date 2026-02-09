@@ -3,7 +3,12 @@ import { Link } from "react-router-dom";
 import { db, getTodayDate } from "../db/database";
 import MilkChart from "../components/MilkChart";
 import { SkeletonCard } from "../components/Loader";
-import { syncAll, isOnline } from "../services/syncService";
+import {
+  syncAll,
+  isOnline,
+  pullAnimals,
+  pullReports,
+} from "../services/syncService";
 
 interface Stats {
   total: number;
@@ -20,7 +25,16 @@ export default function DashboardPage() {
   const [notifScheduled, setNotifScheduled] = useState(false);
 
   useEffect(() => {
-    load();
+    // Pull from server first, then load local data
+    const init = async () => {
+      if (isOnline()) {
+        console.log("[Dashboard] Pulling data from server...");
+        await pullAnimals();
+        await pullReports();
+      }
+      await load();
+    };
+    init();
   }, []);
 
   const load = async () => {

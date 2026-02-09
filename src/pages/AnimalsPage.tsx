@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { db, type Animal } from "../db/database";
 import { SkeletonList } from "../components/Loader";
+import { isOnline, pullAnimals } from "../services/syncService";
 
 export default function AnimalsPage() {
   const [animals, setAnimals] = useState<Animal[]>([]);
@@ -9,7 +10,15 @@ export default function AnimalsPage() {
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
-    load();
+    const init = async () => {
+      // Pull from server first if online
+      if (isOnline()) {
+        console.log("[Animals] Pulling animals from server...");
+        await pullAnimals();
+      }
+      await load();
+    };
+    init();
   }, []);
 
   const load = async () => {

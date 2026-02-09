@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { db, type Animal, type DailyReport } from "../db/database";
 import Loader from "../components/Loader";
+import { isOnline, pullAnimals, pullReports } from "../services/syncService";
 
 export default function AnimalDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -12,7 +13,16 @@ export default function AnimalDetailsPage() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    load();
+    const init = async () => {
+      // Pull from server first if online
+      if (isOnline()) {
+        console.log("[AnimalDetails] Pulling data from server...");
+        await pullAnimals();
+        await pullReports();
+      }
+      await load();
+    };
+    init();
   }, [id]);
 
   const load = async () => {
