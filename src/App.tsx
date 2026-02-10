@@ -7,6 +7,7 @@ import { AnimalDetail } from './pages/AnimalDetail';
 import { AnimalForm } from './pages/AnimalForm';
 import { ReportsList } from './pages/ReportsList';
 import { AddReport } from './pages/AddReport';
+import { Settings } from './pages/Settings';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/animals/:id" element={<AnimalDetail />} />
             <Route path="/reports" element={<ReportsList />} />
             <Route path="/reports/add" element={<AddReport />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
         </Routes>
       </BrowserRouter>

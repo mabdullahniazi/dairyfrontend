@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { db, type IAnimal } from '../lib/db';
 import { saveAnimalLocally, updateAnimalLocally, deleteAnimalLocally } from '../lib/sync';
 import { useLiveQuery } from 'dexie-react-hooks';

@@ -1,60 +1,67 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAnimals } from '../hooks/useAnimals';
+import { useNavigate } from 'react-router-dom';
 import { AnimalCard } from '../components/AnimalCard';
 import { EmptyState } from '../components/EmptyState';
 
-const types = ['all', 'cow', 'buffalo', 'goat', 'sheep'] as const;
-const typeLabels: Record<string, string> = {
-  all: '🐾 All',
-  cow: '🐄 Cows',
-  buffalo: '🐃 Buffalo',
-  goat: '🐐 Goats',
-  sheep: '🐑 Sheep',
+const filters = ['all', 'cow', 'buffalo', 'goat', 'sheep'] as const;
+const filterEmojis: Record<string, string> = {
+  all: '🏷️', cow: '🐄', buffalo: '🐃', goat: '🐐', sheep: '🐑',
 };
 
 export function AnimalsList() {
-  const [filter, setFilter] = useState<string>('all');
-  const { animals, loading } = useAnimals(filter);
+  const { animals, loading } = useAnimals();
   const navigate = useNavigate();
+  const [activeFilter, setActiveFilter] = useState<string>('all');
+
+  const filtered = activeFilter === 'all'
+    ? animals
+    : animals.filter(a => a.type === activeFilter);
 
   return (
-    <div className="px-5 pt-4 animate-[fadeIn_0.3s_ease-out]">
+    <div className="px-4 sm:px-6 lg:px-8 pt-4 animate-[fadeIn_0.3s_ease-out]">
       {/* Filter Chips */}
-      <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar mb-2">
-        {types.map(type => (
+      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3">
+        {filters.map(f => (
           <button
-            key={type}
-            onClick={() => setFilter(type)}
+            key={f}
+            onClick={() => setActiveFilter(f)}
             className={`
-              flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200
-              ${filter === type
+              flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold capitalize whitespace-nowrap transition-all duration-200
+              ${activeFilter === f
                 ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/20'
-                : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50'
+                : 'glass-card text-stone-600 hover:bg-white/90'
               }
             `}
           >
-            {typeLabels[type]}
+            <span>{filterEmojis[f]}</span>
+            {f}
           </button>
         ))}
       </div>
 
-      {/* Animals Grid */}
+      {/* Content */}
       {loading ? (
         <div className="flex justify-center py-16">
           <div className="w-8 h-8 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
         </div>
-      ) : animals.length === 0 ? (
-        <EmptyState
-          icon={filter !== 'all' ? typeLabels[filter]?.split(' ')[0] || '🐾' : '🐾'}
-          title={filter !== 'all' ? `No ${filter}s yet` : 'No animals yet'}
-          description="Add your livestock to start tracking their daily production and health."
-          action={{ label: '+ Add Animal', onClick: () => navigate('/animals/add') }}
-        />
+      ) : filtered.length === 0 ? (
+        <div className="glass-card rounded-2xl p-6">
+          <EmptyState
+            icon="🐄"
+            title={activeFilter === 'all' ? 'No Animals Yet' : `No ${activeFilter}s`}
+            description={activeFilter === 'all' ? 'Add your first animal to get started.' : `You haven't added any ${activeFilter}s yet.`}
+            action={activeFilter === 'all' ? { label: '+ Add Animal', onClick: () => navigate('/animals/add') } : undefined}
+          />
+        </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3">
-          {animals.map(animal => (
-            <AnimalCard key={animal.id} animal={animal} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {filtered.map(animal => (
+            <AnimalCard
+              key={animal.id}
+              animal={animal}
+              onClick={() => navigate(`/animals/${animal.id}`)}
+            />
           ))}
         </div>
       )}
@@ -62,7 +69,7 @@ export function AnimalsList() {
       {/* FAB */}
       <button
         onClick={() => navigate('/animals/add')}
-        className="fixed bottom-24 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[calc(256px-56px)] w-14 h-14 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl shadow-2xl shadow-amber-600/30 flex items-center justify-center text-2xl font-light transition-all duration-200 active:scale-90 z-20"
+        className="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-14 h-14 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl shadow-2xl shadow-amber-600/30 flex items-center justify-center text-2xl font-light transition-all duration-200 active:scale-90 z-20"
       >
         +
       </button>

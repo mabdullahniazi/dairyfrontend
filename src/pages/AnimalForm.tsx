@@ -82,126 +82,104 @@ export function AnimalForm() {
   };
 
   return (
-    <div className="px-5 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out]">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Name */}
-        <div>
-          <label className="block text-sm font-bold text-stone-700 mb-1.5">Name *</label>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="e.g. Daisy"
-            required
-            className="w-full bg-white border border-stone-200 rounded-2xl px-4 py-3.5 text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
-          />
-        </div>
-
-        {/* Tag Number */}
-        <div>
-          <label className="block text-sm font-bold text-stone-700 mb-1.5">Tag Number</label>
-          <input
-            type="text"
-            value={tagNumber}
-            onChange={e => setTagNumber(e.target.value)}
-            placeholder="e.g. A-001"
-            className="w-full bg-white border border-stone-200 rounded-2xl px-4 py-3.5 text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
-          />
-        </div>
-
-        {/* Animal Type */}
-        <div>
-          <label className="block text-sm font-bold text-stone-700 mb-1.5">Animal Type *</label>
-          <div className="grid grid-cols-4 gap-2">
-            {animalTypes.map(t => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setType(t)}
-                className={`
-                  flex flex-col items-center gap-1 py-3 rounded-2xl border-2 transition-all duration-200
-                  ${type === t
-                    ? 'border-amber-500 bg-amber-50 shadow-lg shadow-amber-500/10'
-                    : 'border-stone-200 bg-white hover:border-stone-300'
-                  }
-                `}
-              >
-                <span className="text-2xl">{typeEmojis[t]}</span>
-                <span className={`text-xs font-semibold capitalize ${type === t ? 'text-amber-700' : 'text-stone-500'}`}>
-                  {t}
-                </span>
-              </button>
-            ))}
+    <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out]">
+      <div className="glass-card rounded-2xl p-5 sm:p-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Name */}
+          <div>
+            <label className="block text-sm font-bold text-stone-700 mb-1.5">Name *</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="e.g. Daisy"
+              required
+              className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
+            />
           </div>
-        </div>
 
-        {/* Age */}
-        <div>
-          <label className="block text-sm font-bold text-stone-700 mb-1.5">Age (years)</label>
-          <input
-            type="number"
-            value={age}
-            onChange={e => setAge(e.target.value)}
-            placeholder="0"
-            min="0"
-            max="30"
-            className="w-full bg-white border border-stone-200 rounded-2xl px-4 py-3.5 text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
-          />
-        </div>
+          {/* Tag Number */}
+          <div>
+            <label className="block text-sm font-bold text-stone-700 mb-1.5">Tag Number</label>
+            <input
+              type="text"
+              value={tagNumber}
+              onChange={e => setTagNumber(e.target.value)}
+              placeholder="e.g. A-001"
+              className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
+            />
+          </div>
 
-        {/* Dynamic Attributes */}
-        <div>
-          <label className="block text-sm font-bold text-stone-700 mb-1.5">Custom Attributes</label>
-          {Object.entries(attributes).length > 0 && (
-            <div className="space-y-2 mb-3">
-              {Object.entries(attributes).map(([key, value]) => (
-                <div key={key} className="flex items-center gap-2 bg-stone-50 rounded-xl px-3 py-2">
-                  <span className="text-xs font-medium text-stone-600 capitalize flex-1">{key}: {value}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveAttribute(key)}
-                    className="text-stone-400 hover:text-red-500 transition-colors text-sm"
-                  >
-                    ✕
-                  </button>
-                </div>
+          {/* Animal Type */}
+          <div>
+            <label className="block text-sm font-bold text-stone-700 mb-1.5">Animal Type *</label>
+            <div className="grid grid-cols-4 gap-2">
+              {animalTypes.map(t => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setType(t)}
+                  className={`
+                    flex flex-col items-center gap-1 py-3 rounded-xl border-2 transition-all duration-200
+                    ${type === t
+                      ? 'border-amber-500 bg-amber-50 shadow-lg shadow-amber-500/10'
+                      : 'border-stone-200 bg-white hover:border-stone-300'
+                    }
+                  `}
+                >
+                  <span className="text-2xl">{typeEmojis[t]}</span>
+                  <span className={`text-xs font-semibold capitalize ${type === t ? 'text-amber-700' : 'text-stone-500'}`}>
+                    {t}
+                  </span>
+                </button>
               ))}
             </div>
-          )}
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={attrKey}
-              onChange={e => setAttrKey(e.target.value)}
-              placeholder="Attribute name"
-              className="flex-1 bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
-            />
-            <input
-              type="text"
-              value={attrValue}
-              onChange={e => setAttrValue(e.target.value)}
-              placeholder="Value"
-              className="flex-1 bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
-            />
-            <button
-              type="button"
-              onClick={handleAddAttribute}
-              className="px-3 bg-stone-100 hover:bg-stone-200 rounded-xl text-stone-600 font-bold transition-colors"
-            >
-              +
-            </button>
           </div>
-        </div>
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={submitting || !name.trim()}
-          className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white rounded-2xl py-4 font-bold text-base shadow-xl shadow-amber-600/20 transition-all duration-200 active:scale-[0.98]"
-        >
-          {submitting ? 'Saving...' : isEdit ? 'Update Animal' : 'Add Animal'}
-        </button>
-      </form>
+          {/* Age */}
+          <div>
+            <label className="block text-sm font-bold text-stone-700 mb-1.5">Age (years)</label>
+            <input
+              type="number"
+              value={age}
+              onChange={e => setAge(e.target.value)}
+              placeholder="0"
+              min="0"
+              max="30"
+              className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
+            />
+          </div>
+
+          {/* Dynamic Attributes */}
+          <div>
+            <label className="block text-sm font-bold text-stone-700 mb-1.5">Custom Attributes</label>
+            {Object.entries(attributes).length > 0 && (
+              <div className="space-y-2 mb-3">
+                {Object.entries(attributes).map(([key, value]) => (
+                  <div key={key} className="flex items-center gap-2 bg-stone-50 rounded-xl px-3 py-2">
+                    <span className="text-xs font-medium text-stone-600 capitalize flex-1">{key}: {value}</span>
+                    <button type="button" onClick={() => handleRemoveAttribute(key)} className="text-stone-400 hover:text-red-500 transition-colors text-sm">✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <input type="text" value={attrKey} onChange={e => setAttrKey(e.target.value)} placeholder="Attribute name" className="flex-1 bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all" />
+              <input type="text" value={attrValue} onChange={e => setAttrValue(e.target.value)} placeholder="Value" className="flex-1 bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all" />
+              <button type="button" onClick={handleAddAttribute} className="px-3 bg-stone-100 hover:bg-stone-200 rounded-xl text-stone-600 font-bold transition-colors">+</button>
+            </div>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={submitting || !name.trim()}
+            className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white rounded-xl py-3.5 font-bold text-base shadow-xl shadow-amber-600/20 transition-all duration-200 active:scale-[0.98]"
+          >
+            {submitting ? 'Saving...' : isEdit ? 'Update Animal' : 'Add Animal'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

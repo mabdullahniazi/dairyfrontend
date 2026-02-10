@@ -5,7 +5,6 @@ import { StatCard } from '../components/StatCard';
 import { EmptyState } from '../components/EmptyState';
 import { useEffect, useState } from 'react';
 import { subscribeToPush, isPushSubscribed } from '../lib/notifications';
-import { api } from '../lib/api';
 import { db } from '../lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -15,7 +14,6 @@ export function Dashboard() {
   const { animals } = useAnimals();
   const [pushEnabled, setPushEnabled] = useState(false);
 
-  // Get last 7 days milk data
   const weekData = useLiveQuery(async () => {
     const days: { date: string; milk: number }[] = [];
     for (let i = 6; i >= 0; i--) {
@@ -44,34 +42,35 @@ export function Dashboard() {
 
   if (animals.length === 0) {
     return (
-      <div className="px-5 pt-6">
-        <div className="mb-6">
+      <div className="px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="glass-card rounded-2xl p-6 mb-4">
           <p className="text-stone-400 text-sm">{dateStr}</p>
           <h2 className="text-2xl font-extrabold text-stone-800 mt-1">{greeting} 👋</h2>
         </div>
-        <EmptyState
-          icon="🐄"
-          title="Welcome to Livestock Manager"
-          description="Start by adding your first animal to track daily reports and milk production."
-          action={{ label: '+ Add First Animal', onClick: () => navigate('/animals/add') }}
-        />
+        <div className="glass-card rounded-2xl p-6">
+          <EmptyState
+            icon="🐄"
+            title="Welcome to Livestock Manager"
+            description="Start by adding your first animal to track daily reports and milk production."
+            action={{ label: '+ Add First Animal', onClick: () => navigate('/animals/add') }}
+          />
+        </div>
       </div>
     );
   }
 
-  // Simple sparkline
   const maxMilk = Math.max(...(weekData || []).map(d => d.milk), 1);
 
   return (
-    <div className="px-5 pt-6 animate-[fadeIn_0.3s_ease-out]">
+    <div className="px-4 sm:px-6 lg:px-8 pt-6 animate-[fadeIn_0.3s_ease-out]">
       {/* Greeting */}
-      <div className="mb-6">
+      <div className="glass-card rounded-2xl p-5 mb-4">
         <p className="text-stone-400 text-sm">{dateStr}</p>
         <h2 className="text-2xl font-extrabold text-stone-800 mt-1">{greeting} 👋</h2>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <StatCard icon="🐾" value={stats.totalAnimals} label="Total Animals" color="amber" />
         <StatCard icon="🥛" value={`${stats.totalMilk}L`} label="Today's Milk" color="emerald" />
         <StatCard icon="📋" value={stats.todayReportCount} label="Reports Today" color="blue" />
@@ -81,7 +80,7 @@ export function Dashboard() {
       {/* Quick Action */}
       <button
         onClick={() => navigate('/reports/add')}
-        className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white rounded-2xl p-4 font-bold text-base shadow-xl shadow-amber-600/20 transition-all duration-200 active:scale-[0.98] mb-6 flex items-center justify-center gap-2"
+        className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white rounded-2xl p-4 font-bold text-base shadow-xl shadow-amber-600/20 transition-all duration-200 active:scale-[0.98] mb-4 flex items-center justify-center gap-2"
       >
         <span className="text-xl">📝</span>
         Add Today's Report
@@ -89,7 +88,7 @@ export function Dashboard() {
 
       {/* Milk Trend Sparkline */}
       {weekData && weekData.some(d => d.milk > 0) && (
-        <div className="bg-white border border-stone-200/60 rounded-2xl p-4 mb-6">
+        <div className="glass-card rounded-2xl p-5 mb-4">
           <h3 className="text-sm font-bold text-stone-700 mb-3">Milk This Week</h3>
           <div className="flex items-end gap-1.5 h-20">
             {weekData.map((day, i) => (
@@ -116,7 +115,7 @@ export function Dashboard() {
       {!pushEnabled && (
         <button
           onClick={handleEnableNotifications}
-          className="w-full bg-stone-100 hover:bg-stone-200 border border-stone-200 rounded-2xl p-4 text-left transition-colors mb-6"
+          className="w-full glass-card hover:bg-white/95 rounded-2xl p-4 text-left transition-colors mb-4"
         >
           <div className="flex items-center gap-3">
             <span className="text-2xl">🔔</span>

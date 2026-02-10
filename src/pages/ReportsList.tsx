@@ -23,9 +23,9 @@ export function ReportsList() {
   const totalFeed = reports.reduce((sum, r) => sum + (r.feed || 0), 0);
 
   return (
-    <div className="px-5 pt-4 animate-[fadeIn_0.3s_ease-out]">
+    <div className="px-4 sm:px-6 lg:px-8 pt-4 animate-[fadeIn_0.3s_ease-out]">
       {/* Date Navigator */}
-      <div className="flex items-center justify-between bg-white border border-stone-200/60 rounded-2xl p-3 mb-4">
+      <div className="glass-card rounded-2xl p-3 mb-4 flex items-center justify-between">
         <button
           onClick={() => navigateDay(-1)}
           className="p-2 hover:bg-stone-100 rounded-xl transition-colors text-stone-600"
@@ -50,16 +50,16 @@ export function ReportsList() {
 
       {/* Day Summary */}
       {reports.length > 0 && (
-        <div className="flex gap-3 mb-4">
-          <div className="flex-1 bg-emerald-50 border border-emerald-200/60 rounded-2xl p-3 text-center">
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="glass-card rounded-2xl p-3 text-center">
             <p className="text-lg font-extrabold text-emerald-700">{totalMilk}L</p>
             <p className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Milk</p>
           </div>
-          <div className="flex-1 bg-amber-50 border border-amber-200/60 rounded-2xl p-3 text-center">
+          <div className="glass-card rounded-2xl p-3 text-center">
             <p className="text-lg font-extrabold text-amber-700">{totalFeed}kg</p>
             <p className="text-[10px] text-amber-600 font-medium uppercase tracking-wider">Feed</p>
           </div>
-          <div className="flex-1 bg-blue-50 border border-blue-200/60 rounded-2xl p-3 text-center">
+          <div className="glass-card rounded-2xl p-3 text-center">
             <p className="text-lg font-extrabold text-blue-700">{reports.length}</p>
             <p className="text-[10px] text-blue-600 font-medium uppercase tracking-wider">Reports</p>
           </div>
@@ -72,19 +72,18 @@ export function ReportsList() {
           <div className="w-8 h-8 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : reports.length === 0 ? (
-        <EmptyState
-          icon="📋"
-          title="No Reports"
-          description={`No reports filed for ${displayDate}. Tap below to add one.`}
-          action={{ label: '+ Add Report', onClick: () => navigate('/reports/add') }}
-        />
+        <div className="glass-card rounded-2xl p-6">
+          <EmptyState
+            icon="📋"
+            title="No Reports"
+            description={`No reports filed for ${displayDate}. Tap below to add one.`}
+            action={{ label: '+ Add Report', onClick: () => navigate('/reports/add') }}
+          />
+        </div>
       ) : (
         <div className="space-y-3">
           {reports.map(report => (
-            <div
-              key={report.id}
-              className="bg-white border border-stone-200/60 rounded-2xl p-4 transition-all hover:shadow-md"
-            >
+            <div key={report.id} className="glass-card rounded-2xl p-4 transition-all hover:shadow-md">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-2xl">
                   {report.animal?.type === 'cow' ? '🐄' : report.animal?.type === 'buffalo' ? '🐃' : report.animal?.type === 'goat' ? '🐐' : report.animal?.type === 'sheep' ? '🐑' : '🐾'}
@@ -104,16 +103,10 @@ export function ReportsList() {
                 )}
               </div>
               <div className="flex gap-4 text-sm">
-                {report.milk > 0 && (
-                  <span className="text-emerald-600 font-medium">🥛 {report.milk}L</span>
-                )}
-                {report.feed > 0 && (
-                  <span className="text-amber-600 font-medium">🌾 {report.feed}kg</span>
-                )}
+                {report.milk > 0 && <span className="text-emerald-600 font-medium">🥛 {report.milk}L</span>}
+                {report.feed > 0 && <span className="text-amber-600 font-medium">🌾 {report.feed}kg</span>}
               </div>
-              {report.notes && (
-                <p className="text-xs text-stone-400 mt-2 leading-relaxed">{report.notes}</p>
-              )}
+              {report.notes && <p className="text-xs text-stone-400 mt-2 leading-relaxed">{report.notes}</p>}
             </div>
           ))}
         </div>
@@ -122,7 +115,7 @@ export function ReportsList() {
       {/* FAB */}
       <button
         onClick={() => navigate('/reports/add')}
-        className="fixed bottom-24 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[calc(256px-56px)] w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-2xl shadow-emerald-600/30 flex items-center justify-center text-2xl font-light transition-all duration-200 active:scale-90 z-20"
+        className="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-2xl shadow-emerald-600/30 flex items-center justify-center text-2xl font-light transition-all duration-200 active:scale-90 z-20"
       >
         +
       </button>

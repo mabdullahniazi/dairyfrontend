@@ -2,26 +2,25 @@ interface StatCardProps {
   icon: string;
   value: string | number;
   label: string;
-  color?: 'amber' | 'emerald' | 'blue' | 'rose';
+  color: 'amber' | 'emerald' | 'blue' | 'rose';
 }
 
 const colorMap = {
-  amber: 'from-amber-500/15 to-amber-600/5 border-amber-200/60 text-amber-700',
-  emerald: 'from-emerald-500/15 to-emerald-600/5 border-emerald-200/60 text-emerald-700',
-  blue: 'from-blue-500/15 to-blue-600/5 border-blue-200/60 text-blue-700',
-  rose: 'from-rose-500/15 to-rose-600/5 border-rose-200/60 text-rose-700',
+  amber: { bg: 'bg-amber-50/80', text: 'text-amber-700', label: 'text-amber-600/70' },
+  emerald: { bg: 'bg-emerald-50/80', text: 'text-emerald-700', label: 'text-emerald-600/70' },
+  blue: { bg: 'bg-blue-50/80', text: 'text-blue-700', label: 'text-blue-600/70' },
+  rose: { bg: 'bg-rose-50/80', text: 'text-rose-700', label: 'text-rose-600/70' },
 };
 
-export function StatCard({ icon, value, label, color = 'amber' }: StatCardProps) {
+export function StatCard({ icon, value, label, color }: StatCardProps) {
+  const c = colorMap[color];
   return (
-    <div className={`
-      bg-gradient-to-br ${colorMap[color]}
-      border rounded-2xl p-4 flex flex-col gap-1
-      transition-transform active:scale-[0.97]
-    `}>
-      <span className="text-2xl">{icon}</span>
-      <span className="text-2xl font-extrabold tracking-tight">{value}</span>
-      <span className="text-xs font-medium opacity-70 uppercase tracking-wider">{label}</span>
+    <div className={`glass-card rounded-2xl p-4 ${c.bg} transition-all hover:shadow-md`}>
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-xl">{icon}</span>
+      </div>
+      <p className={`text-2xl font-extrabold ${c.text}`}>{value}</p>
+      <p className={`text-xs font-medium ${c.label} mt-0.5`}>{label}</p>
     </div>
   );
 }
