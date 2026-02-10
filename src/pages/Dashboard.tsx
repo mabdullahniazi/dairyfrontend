@@ -50,7 +50,7 @@ export function Dashboard() {
         <div className="glass-card rounded-2xl p-6">
           <EmptyState
             icon="🐄"
-            title="Welcome to Livestock Manager"
+            title="Welcome to Livestock Managers"
             description="Start by adding your first animal to track daily reports and milk production."
             action={{ label: '+ Add First Animal', onClick: () => navigate('/animals/add') }}
           />
