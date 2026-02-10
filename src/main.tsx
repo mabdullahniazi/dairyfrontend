@@ -1,16 +1,10 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import App from './App'
-import { initNotifications } from './services/notificationService'
+import './index.css'
 
-// Initialize notifications when app loads
-initNotifications().catch(console.error);
-
-// Service worker is automatically registered by vite-plugin-pwa in production build
-// No manual registration needed - the plugin injects it
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>,
+  </React.StrictMode>,
 )
