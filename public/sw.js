@@ -1,32 +1,9 @@
-// Service Worker for Livestock Manager PWA
-// Handles push notifications and basic caching
+// Dev-mode service worker with push notification handlers
+// In production, VitePWA's injectManifest replaces this with src/sw.ts (compiled)
+// This file only runs in dev mode via Vite's static serving from /public
 
-const CACHE_NAME = 'livestock-v1';
-
-// Install event
-self.addEventListener('install', (event) => {
-  console.log('[SW] Installing...');
-  self.skipWaiting();
-});
-
-// Activate event
-self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating...');
-  event.waitUntil(
-    caches.keys().then((cacheNames) =>
-      Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
-      )
-    )
-  );
-  self.clients.claim();
-});
-
-// Push notification event
 self.addEventListener('push', (event) => {
-  console.log('[SW] Push received');
+  console.log('[SW-DEV] Push received');
 
   let data = {
     title: '🐄 Livestock Manager',
@@ -45,46 +22,34 @@ self.addEventListener('push', (event) => {
     }
   }
 
-  const options = {
-    body: data.body,
-    icon: data.icon,
-    badge: data.badge,
-    tag: data.tag,
-    data: data.data,
-    vibrate: [200, 100, 200],
-    requireInteraction: true,
-    actions: [
-      { action: 'open', title: 'Open App' },
-      { action: 'dismiss', title: 'Dismiss' },
-    ],
-  };
-
-  event.waitUntil(self.registration.showNotification(data.title, options));
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: data.icon,
+      badge: data.badge,
+      tag: data.tag,
+      data: data.data,
+      vibrate: [200, 100, 200],
+      requireInteraction: true,
+    })
+  );
 });
 
-// Notification click event
 self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] Notification clicked');
+  console.log('[SW-DEV] Notification clicked');
   event.notification.close();
 
   const urlToOpen = event.notification.data?.url || '/';
 
   event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // If a window is already open, focus it
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
         if (client.url.includes(self.location.origin)) {
           client.navigate(urlToOpen);
           return client.focus();
         }
       }
-      // Otherwise open a new window
-      return self.clients.openWindow(urlToOpen);
+      return clients.openWindow(urlToOpen);
     })
   );
-});
-
-// Notification close event
-self.addEventListener('notificationclose', (event) => {
-  console.log('[SW] Notification dismissed');
 });
