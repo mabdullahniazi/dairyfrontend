@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { db, type IAnimal } from '../lib/db';
-import { saveAnimalLocally, updateAnimalLocally, deleteAnimalLocally } from '../lib/sync';
+import { saveAnimal, updateAnimal, deleteAnimalLocally } from '../lib/sync';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 export function useAnimals(typeFilter?: string) {
@@ -15,11 +15,11 @@ export function useAnimals(typeFilter?: string) {
   );
 
   const addAnimal = useCallback(async (data: Omit<IAnimal, 'id' | 'synced' | 'createdAt'>) => {
-    return saveAnimalLocally(data);
+    return saveAnimal(data);
   }, []);
 
   const editAnimal = useCallback(async (id: number, data: Partial<IAnimal>) => {
-    return updateAnimalLocally(id, data);
+    return updateAnimal(id, data);
   }, []);
 
   const removeAnimal = useCallback(async (id: number) => {

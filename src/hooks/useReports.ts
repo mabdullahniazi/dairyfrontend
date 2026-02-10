@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { db, type IReport } from '../lib/db';
-import { saveReportLocally, updateReportLocally, deleteReportLocally } from '../lib/sync';
+import { saveReport, updateReport, deleteReportLocally } from '../lib/sync';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 export function useReports(date?: string, animalId?: number) {
@@ -30,11 +30,11 @@ export function useReports(date?: string, animalId?: number) {
   );
 
   const addReport = useCallback(async (data: Omit<IReport, 'id' | 'synced' | 'createdAt'>) => {
-    return saveReportLocally(data);
+    return saveReport(data);
   }, []);
 
   const editReport = useCallback(async (id: number, data: Partial<IReport>) => {
-    return updateReportLocally(id, data);
+    return updateReport(id, data);
   }, []);
 
   const removeReport = useCallback(async (id: number) => {

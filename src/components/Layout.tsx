@@ -2,7 +2,7 @@ import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { useSync } from '../hooks/useSync';
 
 export function Layout() {
-  const { syncing, isOnline, doSync } = useSync();
+  const { syncing, isOnline, doSync, pendingCount } = useSync();
   const location = useLocation();
 
   const getTitle = () => {
@@ -54,15 +54,28 @@ export function Layout() {
                 onClick={doSync}
                 disabled={syncing || !isOnline}
                 className={`
-                  p-2.5 rounded-xl transition-all duration-200
+                  relative p-2.5 rounded-xl transition-all duration-200
                   ${syncing ? 'animate-spin' : ''}
-                  ${isOnline ? 'text-stone-600 hover:bg-stone-100 active:bg-stone-200' : 'text-stone-300'}
+                  ${pendingCount > 0 && isOnline ? 'text-amber-600 hover:bg-amber-50 active:bg-amber-100' : ''}
+                  ${pendingCount === 0 && isOnline ? 'text-stone-600 hover:bg-stone-100 active:bg-stone-200' : ''}
+                  ${!isOnline ? 'text-stone-300' : ''}
                 `}
-                title={syncing ? 'Syncing...' : 'Sync now'}
+                title={
+                  syncing
+                    ? 'Syncing...'
+                    : pendingCount > 0
+                      ? `${pendingCount} unsynced — tap to sync`
+                      : 'All synced ✓'
+                }
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
                 </svg>
+                {pendingCount > 0 && !syncing && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full px-1 animate-pulse">
+                    {pendingCount}
+                  </span>
+                )}
               </button>
             </div>
           </div>

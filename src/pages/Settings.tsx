@@ -147,7 +147,7 @@ export function Settings() {
             onClick={sendTestNotification}
             className="w-full bg-stone-100 hover:bg-stone-200 rounded-xl py-2.5 text-sm font-semibold text-stone-600 transition-colors"
           >
-            📤 Send Test Notification
+            📋 Check Missing Reports
           </button>
         )}
       </section>
