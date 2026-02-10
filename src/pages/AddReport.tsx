@@ -65,7 +65,7 @@ export function AddReport() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out]">
-      <div className="glass-card rounded-2xl p-5 sm:p-6">
+      <div className="glass-card rounded-2xl p-4 sm:p-6 max-w-2xl lg:mx-auto">
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Date */}
           <div>

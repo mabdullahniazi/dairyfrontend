@@ -131,8 +131,6 @@ export function Layout() {
           </div>
         </nav>
 
-        {/* Desktop spacer for sidebar */}
-        <div className="hidden md:block w-56 flex-shrink-0" />
       </div>
     </>
   );

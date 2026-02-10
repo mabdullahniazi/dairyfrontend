@@ -83,7 +83,7 @@ export function AnimalForm() {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out]">
-      <div className="glass-card rounded-2xl p-5 sm:p-6">
+      <div className="glass-card rounded-2xl p-4 sm:p-6 max-w-2xl lg:mx-auto">
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
           <div>
@@ -113,7 +113,7 @@ export function AnimalForm() {
           {/* Animal Type */}
           <div>
             <label className="block text-sm font-bold text-stone-700 mb-1.5">Animal Type *</label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {animalTypes.map(t => (
                 <button
                   key={t}
@@ -163,10 +163,12 @@ export function AnimalForm() {
                 ))}
               </div>
             )}
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input type="text" value={attrKey} onChange={e => setAttrKey(e.target.value)} placeholder="Attribute name" className="flex-1 bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all" />
-              <input type="text" value={attrValue} onChange={e => setAttrValue(e.target.value)} placeholder="Value" className="flex-1 bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all" />
-              <button type="button" onClick={handleAddAttribute} className="px-3 bg-stone-100 hover:bg-stone-200 rounded-xl text-stone-600 font-bold transition-colors">+</button>
+              <div className="flex gap-2">
+                <input type="text" value={attrValue} onChange={e => setAttrValue(e.target.value)} placeholder="Value" className="flex-1 bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all" />
+                <button type="button" onClick={handleAddAttribute} className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 rounded-xl text-stone-600 font-bold transition-colors flex-shrink-0">+</button>
+              </div>
             </div>
           </div>
 

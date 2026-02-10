@@ -62,7 +62,7 @@ export function Dashboard() {
   const maxMilk = Math.max(...(weekData || []).map(d => d.milk), 1);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-6 animate-[fadeIn_0.3s_ease-out]">
+    <div className="px-4 sm:px-6 lg:px-8 pt-6 animate-[fadeIn_0.3s_ease-out] max-w-3xl lg:mx-auto">
       {/* Greeting */}
       <div className="glass-card rounded-2xl p-5 mb-4">
         <p className="text-stone-400 text-sm">{dateStr}</p>

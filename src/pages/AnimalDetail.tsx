@@ -47,7 +47,7 @@ export function AnimalDetail() {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out]">
+    <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out] max-w-2xl lg:mx-auto">
       {/* Hero */}
       <div className="glass-card rounded-2xl overflow-hidden mb-4">
         <div className="bg-gradient-to-br from-amber-50/80 to-orange-50/80 px-6 py-8 text-center">
@@ -69,7 +69,7 @@ export function AnimalDetail() {
         </div>
 
         {/* Actions */}
-        <div className="p-4 flex gap-3 border-t border-stone-100">
+        <div className="p-4 flex flex-col sm:flex-row gap-2 sm:gap-3 border-t border-stone-100">
           <button
             onClick={() => navigate(`/animals/edit/${animalId}`)}
             className="flex-1 bg-amber-600 hover:bg-amber-700 text-white rounded-xl py-3 font-semibold text-sm transition-colors"
@@ -121,7 +121,7 @@ export function AnimalDetail() {
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">Unsynced</span>
                   )}
                 </div>
-                <div className="flex gap-4 text-sm">
+                <div className="flex gap-3 sm:gap-4 text-sm flex-wrap">
                   {report.milk > 0 && <span className="text-emerald-600">🥛 {report.milk}L milk</span>}
                   {report.feed > 0 && <span className="text-amber-600">🌾 {report.feed}kg feed</span>}
                 </div>

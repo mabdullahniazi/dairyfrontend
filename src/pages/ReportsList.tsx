@@ -23,7 +23,7 @@ export function ReportsList() {
   const totalFeed = reports.reduce((sum, r) => sum + (r.feed || 0), 0);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 animate-[fadeIn_0.3s_ease-out]">
+    <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-4 animate-[fadeIn_0.3s_ease-out] max-w-3xl lg:mx-auto">
       {/* Date Navigator */}
       <div className="glass-card rounded-2xl p-3 mb-4 flex items-center justify-between">
         <button
@@ -50,18 +50,18 @@ export function ReportsList() {
 
       {/* Day Summary */}
       {reports.length > 0 && (
-        <div className="grid grid-cols-3 gap-3 mb-4">
-          <div className="glass-card rounded-2xl p-3 text-center">
-            <p className="text-lg font-extrabold text-emerald-700">{totalMilk}L</p>
-            <p className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Milk</p>
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
+          <div className="glass-card rounded-2xl p-2 sm:p-3 text-center">
+            <p className="text-base sm:text-lg font-extrabold text-emerald-700 truncate">{totalMilk}L</p>
+            <p className="text-[9px] sm:text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Milk</p>
           </div>
-          <div className="glass-card rounded-2xl p-3 text-center">
-            <p className="text-lg font-extrabold text-amber-700">{totalFeed}kg</p>
-            <p className="text-[10px] text-amber-600 font-medium uppercase tracking-wider">Feed</p>
+          <div className="glass-card rounded-2xl p-2 sm:p-3 text-center">
+            <p className="text-base sm:text-lg font-extrabold text-amber-700 truncate">{totalFeed}kg</p>
+            <p className="text-[9px] sm:text-[10px] text-amber-600 font-medium uppercase tracking-wider">Feed</p>
           </div>
-          <div className="glass-card rounded-2xl p-3 text-center">
-            <p className="text-lg font-extrabold text-blue-700">{reports.length}</p>
-            <p className="text-[10px] text-blue-600 font-medium uppercase tracking-wider">Reports</p>
+          <div className="glass-card rounded-2xl p-2 sm:p-3 text-center">
+            <p className="text-base sm:text-lg font-extrabold text-blue-700">{reports.length}</p>
+            <p className="text-[9px] sm:text-[10px] text-blue-600 font-medium uppercase tracking-wider">Reports</p>
           </div>
         </div>
       )}
@@ -81,7 +81,7 @@ export function ReportsList() {
           />
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 pb-16 md:pb-0">
           {reports.map(report => (
             <div key={report.id} className="glass-card rounded-2xl p-4 transition-all hover:shadow-md">
               <div className="flex items-center gap-3 mb-2">

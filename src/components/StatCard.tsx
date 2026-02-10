@@ -19,8 +19,8 @@ export function StatCard({ icon, value, label, color }: StatCardProps) {
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xl">{icon}</span>
       </div>
-      <p className={`text-2xl font-extrabold ${c.text}`}>{value}</p>
-      <p className={`text-xs font-medium ${c.label} mt-0.5`}>{label}</p>
+      <p className={`text-lg sm:text-2xl font-extrabold ${c.text} truncate`}>{value}</p>
+      <p className={`text-[10px] sm:text-xs font-medium ${c.label} mt-0.5 truncate`}>{label}</p>
     </div>
   );
 }

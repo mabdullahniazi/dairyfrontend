@@ -44,7 +44,7 @@ export function AnimalCard({ animal, onClick }: AnimalCardProps) {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 mt-0.5">
+          <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 flex-wrap">
             <span className="text-xs text-stone-400 capitalize">{animal.type}</span>
             {animal.tagNumber && (
               <>

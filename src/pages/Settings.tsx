@@ -117,14 +117,14 @@ export function Settings() {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out]">
+    <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out] max-w-2xl lg:mx-auto">
       {/* Notifications */}
       <section className="glass-card rounded-2xl p-5 mb-4">
         <h3 className="text-base font-bold text-stone-800 mb-4 flex items-center gap-2">
           🔔 Notifications
         </h3>
-        <div className="flex items-center justify-between mb-4">
-          <div>
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-stone-700">Daily Reminders</p>
             <p className="text-xs text-stone-400">Get notified about missing reports at 8 AM</p>
           </div>
