@@ -15,6 +15,18 @@ export function Layout() {
     if (path === '/reports/add') return 'Add Report';
     if (path === '/reports') return 'Reports';
     if (path === '/settings') return 'Settings';
+    if (path === '/crops/add') return 'Add Crop';
+    if (path.startsWith('/crops/edit')) return 'Edit Crop';
+    if (path.startsWith('/crops/') && path !== '/crops') return 'Crop Details';
+    if (path === '/crops') return 'My Crops';
+    if (path.startsWith('/expenses/add')) return 'Add Expense';
+    if (path.startsWith('/income/add')) return 'Add Income';
+    if (path === '/land/add') return 'Add Land Plot';
+    if (path.startsWith('/land/edit')) return 'Edit Land Plot';
+    if (path === '/land') return 'Land Plots';
+    if (path === '/reminders/add') return 'Add Reminder';
+    if (path === '/reminders') return 'Reminders';
+    if (path === '/crop-reports') return 'Analytics';
     return 'Livestock Manager';
   };
 
@@ -94,7 +106,8 @@ export function Layout() {
             {[
               { to: '/', label: 'Home', icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> },
               { to: '/animals', label: 'Animals', icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h.01M16 12h.01M9 16c.85.63 1.885 1 3 1s2.15-.37 3-1M7 8.5c.5-.5 1.5-.5 2 0M15 8.5c.5-.5 1.5-.5 2 0"/></svg> },
-              { to: '/reports', label: 'Reports', icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> },
+              { to: '/crops', label: 'Crops', icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg> },
+              { to: '/crop-reports', label: 'Analytics', icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> },
               { to: '/settings', label: 'Settings', icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg> },
             ].map(({ to, label, icon }) => (
               <NavLink
@@ -123,6 +136,10 @@ export function Layout() {
               { to: '/', label: 'Dashboard', emoji: '🏠' },
               { to: '/animals', label: 'My Animals', emoji: '🐄' },
               { to: '/reports', label: 'Reports', emoji: '📋' },
+              { to: '/crops', label: 'My Crops', emoji: '🌾' },
+              { to: '/land', label: 'Land Plots', emoji: '🏕️' },
+              { to: '/reminders', label: 'Reminders', emoji: '⏰' },
+              { to: '/crop-reports', label: 'Analytics', emoji: '📊' },
               { to: '/settings', label: 'Settings', emoji: '⚙️' },
             ].map(({ to, label, emoji }) => (
               <NavLink
