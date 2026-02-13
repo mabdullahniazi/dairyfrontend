@@ -19,7 +19,6 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       />
       {/* Content */}
       <div className="relative w-full sm:max-w-md mx-0 sm:mx-4 md:mx-auto bg-white rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 pb-8 animate-[slideUp_0.3s_ease-out] max-h-[85vh] overflow-y-auto safe-area-pb">
-        {/* Handle bar */}
         <div className="flex justify-center mb-3 sm:mb-4 sm:hidden">
           <div className="w-10 h-1 rounded-full bg-stone-300" />
         </div>

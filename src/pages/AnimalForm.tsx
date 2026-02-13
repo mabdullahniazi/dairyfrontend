@@ -82,8 +82,8 @@ export function AnimalForm() {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out]">
-      <div className="glass-card rounded-2xl p-4 sm:p-6 max-w-2xl lg:mx-auto">
+    <div className="p-5 animate-[fadeIn_0.3s_ease-out] overflow-hidden ">
+      <div className="glass-card rounded-xl p-4 sm:p-6 lg:mx-auto h-[calc(100vh-160px)] overflow-y-auto">
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
           <div>
@@ -176,7 +176,7 @@ export function AnimalForm() {
           <button
             type="submit"
             disabled={submitting || !name.trim()}
-            className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white rounded-xl py-3.5 font-bold text-base shadow-xl shadow-amber-600/20 transition-all duration-200 active:scale-[0.98]"
+            className="w-full bg-amber-600 hover:bg-amber-600/90 hover:cursor-pointer disabled:bg-stone-300 text-white rounded-xl py-3.5 font-bold text-base shadow-xl shadow-amber-600/20 transition-all duration-200 active:scale-[0.98]"
           >
             {submitting ? 'Saving...' : isEdit ? 'Update Animal' : 'Add Animal'}
           </button>
