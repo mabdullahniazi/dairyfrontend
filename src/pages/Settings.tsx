@@ -3,6 +3,7 @@ import { subscribeToPush, unsubscribeFromPush, isPushSubscribed } from '../lib/n
 import { api } from '../lib/api';
 import { db } from '../lib/db';
 import { useToast } from '../components/Toast';
+import { BellRing, CloudDownload, DatabaseSearch, FileDown, Trash2, TriangleAlert } from 'lucide-react';
 
 const Settings = () => {
   const { showToast } = useToast();
@@ -121,7 +122,7 @@ const Settings = () => {
       {/* Notifications */}
       <section className="bg-white/60 rounded-2xl p-5">
         <h3 className="text-base font-bold text-stone-800 mb-4 flex items-center gap-2">
-          🔔 Notifications
+          <BellRing className="w-5 h-5" /> Notifications
         </h3>
         <div className="flex items-center justify-between gap-4 mb-4">
           <div className="min-w-0 flex-1">
@@ -155,7 +156,7 @@ const Settings = () => {
       {/* Storage Usage */}
       <section className="bg-white/60 rounded-2xl p-5">
         <h3 className="text-base font-bold text-stone-800 mb-4 flex items-center gap-2">
-          💾 Data & Storage
+          < DatabaseSearch className="w-5 h-5" /> Data & Storage
         </h3>
         <div className="space-y-3 mb-4">
           <div className="flex justify-between items-center py-2 border-b border-stone-300">
@@ -177,7 +178,7 @@ const Settings = () => {
       <div className="w-full flex flex-col lg:grid grid-cols-3 items-center justify-center gap-5">
         <section className="bg-white/60 rounded-2xl p-5 w-full col-span-2">
           <h3 className="text-base font-bold text-stone-800 mb-4 flex items-center gap-2">
-            📊 Export Data
+            <CloudDownload className="w-5 h-5" /> Export Data
           </h3>
           <p className="text-md text-stone-700">Download all your livestock and report data as CSV files.</p>
           <div className="flex items-end justify-end gap-5 w-full">
@@ -186,22 +187,22 @@ const Settings = () => {
               disabled={exporting}
               className="w-full lg:w-72 bg-gradient-to-r from-sky-600/80 to-sky-700/80 hover:bg-amber-700 disabled:bg-stone-300 text-white rounded-xl py-3 font-semibold text-sm transition-colors shadow-lg shadow-amber-600/20"
             >
-            {exporting ? 'Exporting...' : '⬇️ Export to CSV'}
-          </button>
+              <div className="flex items-center gap-2 justify-center"><FileDown className="w-5 h-5" /> {exporting ? 'Exporting...' : 'Export to CSV'}</div>
+            </button>
           </div>
         </section>
 
         {/* Danger Zone */}
         <section className="bg-white/60 rounded-2xl p-5 w-full">
-          <h3 className="text-base font-bold text-red-500 mb-2 flex items-center gap-2">
-            ⚠️ Danger Zone
+          <h3 className="text-base font-bold mb-2 flex items-center gap-2">
+            <TriangleAlert className="w-5 h-5" /> Danger Zone
           </h3>
           <p className="text-xs text-stone-400 mb-4">Clear all locally stored data. Synced data on the server will remain.</p>
           <button
             onClick={clearLocalData}
-            className="w-full bg-gradient-to-r from-red-500/80 to-red-600/80 hover:bg-red-100 text-white rounded-xl py-3 font-semibold text-sm transition-colors"
+            className="w-full flex items-center gap-2 justify-center bg-gradient-to-r from-red-500/80 to-red-600/80 hover:bg-red-100 text-white rounded-xl py-3 font-semibold text-sm transition-colors"
           >
-            🗑️ Clear Local Data
+            <Trash2 className="w-5 h-5" /> Clear Local Data
           </button>
         </section>
       </div>

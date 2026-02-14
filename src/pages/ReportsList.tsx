@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useReports } from '../hooks/useReports';
 import { useNavigate } from 'react-router-dom';
 import { EmptyState } from '../components/EmptyState';
+import { GlassWater, Sprout } from 'lucide-react';
 
 const ReportsList = () => {
   const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
@@ -35,8 +36,8 @@ const ReportsList = () => {
           </svg>
         </button>
         <div className="text-center">
-          <p className="font-bold text-stone-800 text-sm">{displayDate}</p>
-          {isToday && <p className="text-[10px] text-sky-600 font-semibold">TODAY</p>}
+          <p className="font-bold text-stone-800 text-md">{displayDate}</p>
+          {isToday && <p className="text-[13px] text-sky-700 font-bold">TODAY</p>}
         </div>
         <button
           onClick={() => navigateDay(1)}
@@ -52,16 +53,16 @@ const ReportsList = () => {
       {reports.length > 0 && (
         <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
           <div className="bg-white/60 rounded-2xl p-2 sm:p-3 text-center">
-            <p className="text-base sm:text-lg font-extrabold text-emerald-700 truncate">{totalMilk}L</p>
-            <p className="text-[9px] sm:text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Milk</p>
+            <p className="text-base sm:text-2xl font-extrabold text-emerald-700 truncate">{totalMilk}L</p>
+            <p className="text-[9px] sm:text-[16px] text-emerald-700 font-bold uppercase tracking-wider">Milk</p>
           </div>
           <div className="bg-white/60 rounded-2xl p-2 sm:p-3 text-center">
-            <p className="text-base sm:text-lg font-extrabold text-amber-700 truncate">{totalFeed}kg</p>
-            <p className="text-[9px] sm:text-[10px] text-amber-600 font-medium uppercase tracking-wider">Feed</p>
+            <p className="text-base sm:text-2xl font-extrabold text-amber-700 truncate">{totalFeed}kg</p>
+            <p className="text-[9px] sm:text-[16px] text-amber-700 font-bold uppercase tracking-wider">Feed</p>
           </div>
           <div className="bg-white/60 rounded-2xl p-2 sm:p-3 text-center">
-            <p className="text-base sm:text-lg font-extrabold text-blue-700">{reports.length}</p>
-            <p className="text-[9px] sm:text-[10px] text-blue-600 font-medium uppercase tracking-wider">Reports</p>
+            <p className="text-base sm:text-2xl font-extrabold text-sky-700">{reports.length}</p>
+            <p className="text-[9px] sm:text-[16px] text-sky-700 font-bold uppercase tracking-wider">Reports</p>
           </div>
         </div>
       )}
@@ -85,28 +86,28 @@ const ReportsList = () => {
           {reports.map(report => (
             <div key={report.id} className="bg-white/60 rounded-2xl p-4 transition-all hover:shadow-md">
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-2xl">
+                <span className="text-4xl">
                   {report.animal?.type === 'cow' ? '🐄' : report.animal?.type === 'buffalo' ? '🐃' : report.animal?.type === 'goat' ? '🐐' : report.animal?.type === 'sheep' ? '🐑' : '🐾'}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-stone-800 text-sm truncate">
+                  <h4 className="font-bold text-stone-800 text-2xl truncate">
                     {report.animal?.name || 'Unknown Animal'}
                   </h4>
                   {report.animal?.tagNumber && (
-                    <p className="text-[10px] text-stone-400">Tag: {report.animal.tagNumber}</p>
+                    <p className="text-[14px] text-stone-700 font-medium">Tag: {report.animal.tagNumber}</p>
                   )}
                 </div>
                 {!report.synced && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium flex-shrink-0">
+                  <span className="text-[12px] px-3 py-1 rounded-full bg-amber-100 text-amber-700 font-medium flex-shrink-0">
                     Unsynced
                   </span>
                 )}
               </div>
-              <div className="flex gap-4 text-sm">
-                {report.milk > 0 && <span className="text-emerald-600 font-medium">🥛 {report.milk}L</span>}
-                {report.feed > 0 && <span className="text-amber-600 font-medium">🌾 {report.feed}kg</span>}
+              <div className="flex gap-6 text-2xl">
+                {report.milk > 0 && <span className="flex items-center gap-2 text-emerald-700 font-bold"><GlassWater className="w-5 h-5" /> {report.milk}L</span>}
+                {report.feed > 0 && <span className="flex items-center gap-2 text-amber-700 font-bold"><Sprout className="w-5 h-5" /> {report.feed}kg</span>}
               </div>
-              {report.notes && <p className="text-xs text-stone-400 mt-2 leading-relaxed">{report.notes}</p>}
+              {report.notes && <p className="text-md capitalize text-stone-700 mt-2 mx-2 leading-relaxed">{report.notes}</p>}
             </div>
           ))}
         </div>

@@ -18,10 +18,10 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/animals" element={<AnimalsList />} />
             <Route path="/animals/add" element={<AnimalForm />} />
-            <Route path="/animals/edit/:id" element={<AnimalForm />} />
             <Route path="/animals/:id" element={<AnimalDetail />} />
-            <Route path="/reports" element={<ReportsList />} />
+            <Route path="/animals/edit/:id" element={<AnimalForm />} />
             <Route path="/reports/add" element={<AddReport />} />
+            <Route path="/reports" element={<ReportsList />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
         </Routes>

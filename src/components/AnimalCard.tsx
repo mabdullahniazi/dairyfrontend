@@ -34,28 +34,28 @@ export function AnimalCard({ animal, onClick }: AnimalCardProps) {
       `}
     >
       <div className="flex items-center gap-3">
-        <span className="text-3xl">{typeEmojis[animal.type] || '🐾'}</span>
+        <span className="text-4xl">{typeEmojis[animal.type] || '🐾'}</span>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-bold text-stone-800 truncate">{animal.name}</h3>
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="font-bold text-stone-800 truncate text-2xl capitalize">{animal.name}</h3>
             {!animal.synced && (
-              <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium flex-shrink-0">
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium flex-shrink-0">
                 un-synced
               </span>
             )}
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 flex-wrap">
-            <span className="text-xs text-stone-800 capitalize">{animal.type}</span>
+            <span className="text-sm text-stone-800 capitalize">{animal.type}</span>
             {animal.tagNumber && (
               <>
                 <span className="text-stone-500">/</span>
-                <span className="text-xs text-stone-800">{animal.tagNumber}</span>
+                <span className="text-sm text-stone-800">{animal.tagNumber}</span>
               </>
             )}
             {animal.age > 0 && (
               <>
                 <span className="text-stone-500">/</span>
-                <span className="text-xs text-stone-800">{animal.age}y</span>
+                <span className="text-sm text-stone-800">{animal.age}y</span>
               </>
             )}
           </div>

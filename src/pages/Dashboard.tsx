@@ -8,6 +8,7 @@ import { subscribeToPush, isPushSubscribed } from '../lib/notifications';
 import { db } from '../lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { DashboardChart } from '../components/DashboardChart';
+import { FileText, PawPrint, GlassWater, Sprout, BellRing } from 'lucide-react';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -44,9 +45,9 @@ const Dashboard = () => {
 
   if (animals.length === 0) {
     return (
-      <div className="px-4 sm:px-6 lg:px-8 pt-6">
+      <div className="px-4 sm:px-6 lg:px-6 pt-6">
         <div className="bg-white/60 rounded-2xl p-6 mb-4">
-          <p className="text-stone-400 text-sm">{dateStr}</p>
+          <p className="text-stone-700 text-sm">{dateStr}</p>
           <h2 className="text-2xl font-extrabold text-stone-800 mt-1">{greeting} 👋</h2>
         </div>
         <div className="bg-white/60 rounded-2xl p-6">
@@ -83,10 +84,10 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-        <StatCard icon="🐾" value={stats.totalAnimals} label="Total Animals" color="amber" />
-        <StatCard icon="🥛" value={`${stats.totalMilk}L`} label="Today's Milk" color="emerald" />
-        <StatCard icon="📋" value={stats.todayReportCount} label="Reports Today" color="blue" />
-        <StatCard icon="🌾" value={`${stats.totalFeed}kg`} label="Today's Feed" color="rose" />
+        <StatCard icon={<PawPrint className="w-5 h-5" />} value={stats.totalAnimals} label="Total Animals" color="amber" />
+        <StatCard icon={<GlassWater className="w-5 h-5" />} value={`${stats.totalMilk}L`} label="Today's Milk" color="emerald" />
+        <StatCard icon={<FileText className="w-5 h-5" />} value={stats.todayReportCount} label="Reports Today" color="blue" />
+        <StatCard icon={<Sprout className="w-5 h-5" />} value={`${stats.totalFeed}kg`} label="Today's Feed" color="rose" />
       </div>
 
       {/* Milk Trend Chart */}
@@ -117,10 +118,10 @@ const Dashboard = () => {
       {!pushEnabled && (
         <button
           onClick={handleEnableNotifications}
-          className="w-full bg-white/60 hover:bg-white/95 rounded-2xl p-4 text-left transition-colors"
+          className="w-full bg-white/60 hover:bg-white/95 rounded-2xl p-4 text-left transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <span className="text-2xl">🔔</span>
+            <span className="text-2xl"><BellRing className="w-5 h-5" /></span>
             <div>
               <p className="font-bold text-stone-700 text-sm">Enable Reminders</p>
               <p className="text-xs text-stone-900">Get daily reminders to file your reports</p>
