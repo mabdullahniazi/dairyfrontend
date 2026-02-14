@@ -9,7 +9,7 @@ const filterEmojis: Record<string, string> = {
   all: '🏷️', cow: '🐄', buffalo: '🐃', goat: '🐐', sheep: '🐑',
 };
 
-export function AnimalsList() {
+const AnimalsList = () => {
   const { animals, loading } = useAnimals();
   const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState<string>('all');
@@ -19,9 +19,9 @@ export function AnimalsList() {
     : animals.filter(a => a.type === activeFilter);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 animate-[fadeIn_0.3s_ease-out]">
+    <div className="px-4 sm:px-6 lg:px-6 pt-4 animate-[fadeIn_0.3s_ease-out]">
       {/* Filter Chips */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3">
+      <div className="flex gap-2 overflow-x-auto no-scrollbar py-3">
         {filters.map(f => (
           <button
             key={f}
@@ -29,8 +29,8 @@ export function AnimalsList() {
             className={`
               flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold capitalize whitespace-nowrap transition-all duration-200
               ${activeFilter === f
-                ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/20'
-                : 'glass-card text-stone-600 hover:bg-white/90'
+                ? 'bg-sky-600 text-white shadow-lg shadow-sky-600/20'
+                : 'bg-white/60 text-stone-800 hover:bg-white/80'
               }
             `}
           >
@@ -43,10 +43,10 @@ export function AnimalsList() {
       {/* Content */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-3 border-sky-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="glass-card rounded-2xl p-6">
+        <div className="bg-white/60 rounded-2xl p-6">
           <EmptyState
             icon="🐄"
             title={activeFilter === 'all' ? 'No Animals Yet' : `No ${activeFilter}s`}
@@ -55,7 +55,7 @@ export function AnimalsList() {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-16 md:pb-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 py-6 md:pb-0">
           {filtered.map(animal => (
             <AnimalCard
               key={animal.id}
@@ -69,10 +69,12 @@ export function AnimalsList() {
       {/* FAB */}
       <button
         onClick={() => navigate('/animals/add')}
-        className="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-14 h-14 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl shadow-2xl shadow-amber-600/30 flex items-center justify-center text-2xl font-light transition-all duration-200 active:scale-90 z-20"
+        className="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-14 h-14 bg-gradient-to-br from-sky-600 to-sky-700 hover:bg-sky-700 text-white rounded-2xl shadow-2xl shadow-sky-600/30 flex items-center justify-center text-2xl font-light transition-all duration-200 active:scale-90 z-20"
       >
         +
       </button>
     </div>
   );
 }
+
+export default AnimalsList;

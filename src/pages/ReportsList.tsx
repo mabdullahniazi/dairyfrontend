@@ -3,7 +3,7 @@ import { useReports } from '../hooks/useReports';
 import { useNavigate } from 'react-router-dom';
 import { EmptyState } from '../components/EmptyState';
 
-export function ReportsList() {
+const ReportsList = () => {
   const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
   const { reports, loading } = useReports(selectedDate);
   const navigate = useNavigate();
@@ -23,9 +23,9 @@ export function ReportsList() {
   const totalFeed = reports.reduce((sum, r) => sum + (r.feed || 0), 0);
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-4 animate-[fadeIn_0.3s_ease-out] max-w-3xl lg:mx-auto">
+    <div className="px-4 sm:px-6 lg:px-6 py-6 animate-[fadeIn_0.3s_ease-out] lg:mx-auto">
       {/* Date Navigator */}
-      <div className="glass-card rounded-2xl p-3 mb-4 flex items-center justify-between">
+      <div className="bg-white/60 rounded-2xl p-3 mb-4 flex items-center justify-between">
         <button
           onClick={() => navigateDay(-1)}
           className="p-2 hover:bg-stone-100 rounded-xl transition-colors text-stone-600"
@@ -36,7 +36,7 @@ export function ReportsList() {
         </button>
         <div className="text-center">
           <p className="font-bold text-stone-800 text-sm">{displayDate}</p>
-          {isToday && <p className="text-[10px] text-amber-600 font-semibold">TODAY</p>}
+          {isToday && <p className="text-[10px] text-sky-600 font-semibold">TODAY</p>}
         </div>
         <button
           onClick={() => navigateDay(1)}
@@ -51,15 +51,15 @@ export function ReportsList() {
       {/* Day Summary */}
       {reports.length > 0 && (
         <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4">
-          <div className="glass-card rounded-2xl p-2 sm:p-3 text-center">
+          <div className="bg-white/60 rounded-2xl p-2 sm:p-3 text-center">
             <p className="text-base sm:text-lg font-extrabold text-emerald-700 truncate">{totalMilk}L</p>
             <p className="text-[9px] sm:text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Milk</p>
           </div>
-          <div className="glass-card rounded-2xl p-2 sm:p-3 text-center">
+          <div className="bg-white/60 rounded-2xl p-2 sm:p-3 text-center">
             <p className="text-base sm:text-lg font-extrabold text-amber-700 truncate">{totalFeed}kg</p>
             <p className="text-[9px] sm:text-[10px] text-amber-600 font-medium uppercase tracking-wider">Feed</p>
           </div>
-          <div className="glass-card rounded-2xl p-2 sm:p-3 text-center">
+          <div className="bg-white/60 rounded-2xl p-2 sm:p-3 text-center">
             <p className="text-base sm:text-lg font-extrabold text-blue-700">{reports.length}</p>
             <p className="text-[9px] sm:text-[10px] text-blue-600 font-medium uppercase tracking-wider">Reports</p>
           </div>
@@ -72,7 +72,7 @@ export function ReportsList() {
           <div className="w-8 h-8 border-3 border-amber-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : reports.length === 0 ? (
-        <div className="glass-card rounded-2xl p-6">
+        <div className="bg-white/60 rounded-2xl p-6">
           <EmptyState
             icon="📋"
             title="No Reports"
@@ -83,7 +83,7 @@ export function ReportsList() {
       ) : (
         <div className="space-y-3 pb-16 md:pb-0">
           {reports.map(report => (
-            <div key={report.id} className="glass-card rounded-2xl p-4 transition-all hover:shadow-md">
+            <div key={report.id} className="bg-white/60 rounded-2xl p-4 transition-all hover:shadow-md">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-2xl">
                   {report.animal?.type === 'cow' ? '🐄' : report.animal?.type === 'buffalo' ? '🐃' : report.animal?.type === 'goat' ? '🐐' : report.animal?.type === 'sheep' ? '🐑' : '🐾'}
@@ -115,10 +115,12 @@ export function ReportsList() {
       {/* FAB */}
       <button
         onClick={() => navigate('/reports/add')}
-        className="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow-2xl shadow-emerald-600/30 flex items-center justify-center text-2xl font-light transition-all duration-200 active:scale-90 z-20"
+        className="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-14 h-14 bg-gradient-to-br from-sky-500 to-sky-700 hover:bg-sky-700 text-white rounded-2xl shadow-2xl shadow-sky-600/30 flex items-center justify-center text-2xl font-light transition-all duration-200 active:scale-90 z-20"
       >
         +
       </button>
     </div>
   );
 }
+
+export default ReportsList;

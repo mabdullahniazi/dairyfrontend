@@ -8,7 +8,7 @@ const typeEmojis: Record<string, string> = {
   cow: '🐄', buffalo: '🐃', goat: '🐐', sheep: '🐑',
 };
 
-export function AnimalForm() {
+const AnimalForm = () => {
   const { id } = useParams();
   const isEdit = !!id;
   const animalId = Number(id);
@@ -82,32 +82,34 @@ export function AnimalForm() {
   };
 
   return (
-    <div className="p-5 animate-[fadeIn_0.3s_ease-out] overflow-hidden ">
-      <div className="glass-card rounded-xl p-4 sm:p-6 lg:mx-auto h-[calc(100vh-160px)] overflow-y-auto">
+    <div className="p-5 animate-[fadeIn_0.3s_ease-out] overflow-hidden">
+      <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 sm:p-6 lg:mx-auto h-[calc(100vh-180px)] overflow-y-auto">
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
-          <div>
-            <label className="block text-sm font-bold text-stone-700 mb-1.5">Name *</label>
-            <input
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder="e.g. Daisy"
-              required
-              className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
-            />
-          </div>
+          <div className="w-full items-center flex justify-center gap-2">
+            <div className="w-full">
+              <label className="block text-sm font-bold text-stone-700 mb-1.5">Name *</label>
+              <input
+                type="text"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="e.g. Daisy"
+                required
+                className="w-full bg-white/60 border border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition-all"
+              />
+            </div>
 
-          {/* Tag Number */}
-          <div>
-            <label className="block text-sm font-bold text-stone-700 mb-1.5">Tag Number</label>
-            <input
-              type="text"
-              value={tagNumber}
-              onChange={e => setTagNumber(e.target.value)}
-              placeholder="e.g. A-001"
-              className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
-            />
+            {/* Tag Number */}
+            <div className="w-full">
+              <label className="block text-sm font-bold text-stone-700 mb-1.5">Tag Number</label>
+              <input
+                type="text"
+                value={tagNumber}
+                onChange={e => setTagNumber(e.target.value)}
+                placeholder="e.g. A-001"
+                className="w-full bg-white/60 border border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition-all"
+              />
+            </div>
           </div>
 
           {/* Animal Type */}
@@ -122,13 +124,13 @@ export function AnimalForm() {
                   className={`
                     flex flex-col items-center gap-1 py-3 rounded-xl border-2 transition-all duration-200
                     ${type === t
-                      ? 'border-amber-500 bg-amber-50 shadow-lg shadow-amber-500/10'
-                      : 'border-stone-200 bg-white hover:border-stone-300'
+                      ? 'border-sky-500 bg-sky-50 shadow-lg shadow-sky-500/10'
+                      : 'border-stone-200 bg-white/60 hover:border-stone-300'
                     }
                   `}
                 >
                   <span className="text-2xl">{typeEmojis[t]}</span>
-                  <span className={`text-xs font-semibold capitalize ${type === t ? 'text-amber-700' : 'text-stone-500'}`}>
+                  <span className={`text-xs font-semibold capitalize ${type === t ? 'text-sky-700' : 'text-stone-500'}`}>
                     {t}
                   </span>
                 </button>
@@ -146,7 +148,7 @@ export function AnimalForm() {
               placeholder="0"
               min="0"
               max="30"
-              className="w-full bg-white border border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
+              className="w-full bg-white/60 border border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition-all"
             />
           </div>
 
@@ -164,24 +166,28 @@ export function AnimalForm() {
               </div>
             )}
             <div className="flex flex-col sm:flex-row gap-2">
-              <input type="text" value={attrKey} onChange={e => setAttrKey(e.target.value)} placeholder="Attribute name" className="flex-1 bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all" />
+              <input type="text" value={attrKey} onChange={e => setAttrKey(e.target.value)} placeholder="Attribute name" className="flex-1 bg-white/60 border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition-all" />
               <div className="flex gap-2">
-                <input type="text" value={attrValue} onChange={e => setAttrValue(e.target.value)} placeholder="Value" className="flex-1 bg-white border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all" />
-                <button type="button" onClick={handleAddAttribute} className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 rounded-xl text-stone-600 font-bold transition-colors flex-shrink-0">+</button>
+                <input type="text" value={attrValue} onChange={e => setAttrValue(e.target.value)} placeholder="Value" className="flex-1 bg-white/60 border border-stone-200 rounded-xl px-3 py-2.5 text-sm text-stone-800 placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition-all" />
+                <button type="button" onClick={handleAddAttribute} className="px-4 py-2.5 bg-white/60 hover:bg-white/60 rounded-xl text-stone-600 font-bold transition-colors flex-shrink-0">+</button>
               </div>
             </div>
           </div>
 
           {/* Submit */}
-          <button
-            type="submit"
-            disabled={submitting || !name.trim()}
-            className="w-full bg-amber-600 hover:bg-amber-600/90 hover:cursor-pointer disabled:bg-stone-300 text-white rounded-xl py-3.5 font-bold text-base shadow-xl shadow-amber-600/20 transition-all duration-200 active:scale-[0.98]"
-          >
-            {submitting ? 'Saving...' : isEdit ? 'Update Animal' : 'Add Animal'}
-          </button>
+          <div className="flex justify-end w-full">
+            <button
+              type="submit"
+              disabled={submitting || !name.trim()}
+              className="flex w-80 justify-center items-center bg-gradient-to-r from-sky-600/80 to-sky-700/80 hover:from-sky-600/90 hover:to-sky-700/90 hover:cursor-pointer disabled:bg-sky-300 disabled:cursor-not-allowed text-white rounded-xl py-3.5 font-bold text-base shadow-xl shadow-sky-500/20 transition-all duration-200 active:scale-[0.98]"
+            >
+              {submitting ? 'Saving...' : isEdit ? 'Update Animal' : 'Add Animal'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
 }
+
+export default AnimalForm;

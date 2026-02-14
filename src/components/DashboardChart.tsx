@@ -9,8 +9,8 @@ export interface DashboardChartProps {
 }
 
 const COLORS: Record<string, string> = {
-  emerald: '#10b981',
-  rose: '#f43f5e',
+  emerald: '#059f6bff',
+  rose: '#3f54f4ff',
   amber: '#f59e0b',
   blue: '#3b82f6',
 };

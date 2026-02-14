@@ -4,7 +4,7 @@ import { api } from '../lib/api';
 import { db } from '../lib/db';
 import { useToast } from '../components/Toast';
 
-export function Settings() {
+const Settings = () => {
   const { showToast } = useToast();
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
@@ -117,16 +117,16 @@ export function Settings() {
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 animate-[fadeIn_0.3s_ease-out] max-w-2xl lg:mx-auto">
+    <div className="px-4 flex flex-col gap-5 sm:px-6 lg:px-6 py-6 animate-[fadeIn_0.3s_ease-out] lg:mx-auto">
       {/* Notifications */}
-      <section className="glass-card rounded-2xl p-5 mb-4">
+      <section className="bg-white/60 rounded-2xl p-5">
         <h3 className="text-base font-bold text-stone-800 mb-4 flex items-center gap-2">
           🔔 Notifications
         </h3>
         <div className="flex items-center justify-between gap-4 mb-4">
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-stone-700">Daily Reminders</p>
-            <p className="text-xs text-stone-400">Get notified about missing reports at 8 AM</p>
+            <p className="text-md font-semibold text-stone-700">Daily Reminders</p>
+            <p className="text-xs text-stone-700">Get notified about missing reports at 8 AM</p>
           </div>
           <button
             onClick={togglePush}
@@ -153,54 +153,60 @@ export function Settings() {
       </section>
 
       {/* Storage Usage */}
-      <section className="glass-card rounded-2xl p-5 mb-4">
+      <section className="bg-white/60 rounded-2xl p-5">
         <h3 className="text-base font-bold text-stone-800 mb-4 flex items-center gap-2">
           💾 Data & Storage
         </h3>
         <div className="space-y-3 mb-4">
-          <div className="flex justify-between items-center py-2 border-b border-stone-100">
-            <span className="text-sm text-stone-500">Animals stored</span>
+          <div className="flex justify-between items-center py-2 border-b border-stone-300">
+            <span className="text-sm text-stone-700">Animals stored</span>
             <span className="text-sm font-bold text-stone-700">{storageUsage.animals}</span>
           </div>
-          <div className="flex justify-between items-center py-2 border-b border-stone-100">
-            <span className="text-sm text-stone-500">Reports stored</span>
+          <div className="flex justify-between items-center py-2 border-b border-stone-300">
+            <span className="text-sm text-stone-700">Reports stored</span>
             <span className="text-sm font-bold text-stone-700">{storageUsage.reports}</span>
           </div>
           <div className="flex justify-between items-center py-2">
-            <span className="text-sm text-stone-500">Storage used</span>
+            <span className="text-sm text-stone-700">Storage used</span>
             <span className="text-sm font-bold text-stone-700">{storageUsage.totalKB} KB</span>
           </div>
         </div>
       </section>
 
       {/* Export */}
-      <section className="glass-card rounded-2xl p-5 mb-4">
-        <h3 className="text-base font-bold text-stone-800 mb-4 flex items-center gap-2">
-          📊 Export Data
-        </h3>
-        <p className="text-xs text-stone-400 mb-4">Download all your livestock and report data as CSV files.</p>
-        <button
-          onClick={exportToCSV}
-          disabled={exporting}
-          className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-stone-300 text-white rounded-xl py-3 font-semibold text-sm transition-colors shadow-lg shadow-amber-600/20"
-        >
-          {exporting ? 'Exporting...' : '⬇️ Export to CSV'}
-        </button>
-      </section>
+      <div className="w-full flex flex-col lg:grid grid-cols-3 items-center justify-center gap-5">
+        <section className="bg-white/60 rounded-2xl p-5 w-full col-span-2">
+          <h3 className="text-base font-bold text-stone-800 mb-4 flex items-center gap-2">
+            📊 Export Data
+          </h3>
+          <p className="text-md text-stone-700">Download all your livestock and report data as CSV files.</p>
+          <div className="flex items-end justify-end gap-5 w-full">
+            <button
+              onClick={exportToCSV}
+              disabled={exporting}
+              className="w-full lg:w-72 bg-gradient-to-r from-sky-600/80 to-sky-700/80 hover:bg-amber-700 disabled:bg-stone-300 text-white rounded-xl py-3 font-semibold text-sm transition-colors shadow-lg shadow-amber-600/20"
+            >
+            {exporting ? 'Exporting...' : '⬇️ Export to CSV'}
+          </button>
+          </div>
+        </section>
 
-      {/* Danger Zone */}
-      <section className="glass-card rounded-2xl p-5">
-        <h3 className="text-base font-bold text-red-600 mb-4 flex items-center gap-2">
-          ⚠️ Danger Zone
-        </h3>
-        <p className="text-xs text-stone-400 mb-4">Clear all locally stored data. Synced data on the server will remain.</p>
-        <button
-          onClick={clearLocalData}
-          className="w-full bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-xl py-3 font-semibold text-sm transition-colors"
-        >
-          🗑️ Clear Local Data
-        </button>
-      </section>
+        {/* Danger Zone */}
+        <section className="bg-white/60 rounded-2xl p-5 w-full">
+          <h3 className="text-base font-bold text-red-500 mb-2 flex items-center gap-2">
+            ⚠️ Danger Zone
+          </h3>
+          <p className="text-xs text-stone-400 mb-4">Clear all locally stored data. Synced data on the server will remain.</p>
+          <button
+            onClick={clearLocalData}
+            className="w-full bg-gradient-to-r from-red-500/80 to-red-600/80 hover:bg-red-100 text-white rounded-xl py-3 font-semibold text-sm transition-colors"
+          >
+            🗑️ Clear Local Data
+          </button>
+        </section>
+      </div>
     </div>
   );
 }
+
+export default Settings;

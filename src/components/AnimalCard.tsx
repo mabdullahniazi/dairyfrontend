@@ -28,7 +28,7 @@ export function AnimalCard({ animal, onClick }: AnimalCardProps) {
     <button
       onClick={onClick}
       className={`
-        glass-card w-full text-left rounded-2xl p-4 transition-all duration-200
+        bg-white/60 w-full text-left rounded-2xl p-4 transition-all duration-200
         hover:shadow-lg hover:scale-[1.01] active:scale-[0.99]
         ${typeColors[animal.type] || 'border-stone-200/40'}
       `}
@@ -39,28 +39,28 @@ export function AnimalCard({ animal, onClick }: AnimalCardProps) {
           <div className="flex items-center gap-2">
             <h3 className="font-bold text-stone-800 truncate">{animal.name}</h3>
             {!animal.synced && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium flex-shrink-0">
-                ●
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium flex-shrink-0">
+                un-synced
               </span>
             )}
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 flex-wrap">
-            <span className="text-xs text-stone-400 capitalize">{animal.type}</span>
+            <span className="text-xs text-stone-800 capitalize">{animal.type}</span>
             {animal.tagNumber && (
               <>
-                <span className="text-stone-300">·</span>
-                <span className="text-xs text-stone-400">{animal.tagNumber}</span>
+                <span className="text-stone-500">/</span>
+                <span className="text-xs text-stone-800">{animal.tagNumber}</span>
               </>
             )}
             {animal.age > 0 && (
               <>
-                <span className="text-stone-300">·</span>
-                <span className="text-xs text-stone-400">{animal.age}y</span>
+                <span className="text-stone-500">/</span>
+                <span className="text-xs text-stone-800">{animal.age}y</span>
               </>
             )}
           </div>
         </div>
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-stone-300 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-stone-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </div>

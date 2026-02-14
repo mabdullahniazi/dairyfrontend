@@ -133,7 +133,7 @@ export function Layout() {
                 end={to === '/'}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-100 ${isActive
-                    ? 'bg-gradient-to-r from-amber-600/80 to-amber-700/80 text-white'
+                    ? 'bg-gradient-to-r from-sky-600/80 to-sky-700/80 text-white'
                     : 'text-stone-200 hover:bg-white/40 hover:text-stone-700'
                   }`
                 }

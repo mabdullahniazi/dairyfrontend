@@ -9,7 +9,7 @@ import { db } from '../lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { DashboardChart } from '../components/DashboardChart';
 
-export function Dashboard() {
+const Dashboard = () => {
   const navigate = useNavigate();
   const stats = useTodayStats();
   const { animals } = useAnimals();
@@ -61,12 +61,10 @@ export function Dashboard() {
     );
   }
 
-
-
   return (
-    <div className="p-5 animate-[fadeIn_0.3s_ease-out] gap-4 flex flex-col overflow-hidden">
+    <div className="p-6 animate-[fadeIn_0.3s_ease-out] gap-5 flex flex-col overflow-hidden">
       {/* Greeting */}
-      <div className="flex items-center justify-center w-full gap-5">
+      {/* <div className="flex items-center justify-center w-full gap-5">
 
 
         <div className="w-full bg-white/60 rounded-2xl p-3">
@@ -76,15 +74,15 @@ export function Dashboard() {
 
         <button
           onClick={() => navigate('/reports/add')}
-          className="w-1/2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white rounded-2xl p-6.5 font-bold text-base shadow-xl shadow-amber-600/20 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
+          className="w-1/2 bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-700 hover:to-sky-800 text-white rounded-2xl p-6.5 font-bold text-base shadow-xl shadow-amber-600/20 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
         >
           <span className="text-xl">📝</span>
           Add Today's Report
         </button>
-      </div>
+      </div> */}
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard icon="🐾" value={stats.totalAnimals} label="Total Animals" color="amber" />
         <StatCard icon="🥛" value={`${stats.totalMilk}L`} label="Today's Milk" color="emerald" />
         <StatCard icon="📋" value={stats.todayReportCount} label="Reports Today" color="blue" />
@@ -93,7 +91,7 @@ export function Dashboard() {
 
       {/* Milk Trend Chart */}
       {weekData && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="bg-white/60 rounded-2xl p-3">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -133,3 +131,5 @@ export function Dashboard() {
     </div>
   );
 }
+
+export default Dashboard;
